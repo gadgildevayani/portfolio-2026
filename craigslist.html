@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="assets/images/devayani-circle.png" />
+    <title>Craigslist Redesign — Devayani Gadgil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      :root {
+        --black:  #1D1D1F;
+        --gray:   #6E6E73;
+        --white:  #FFFFFF;
+        --border: rgba(0,0,0,0.08);
+        --font: "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+        --font-display: "Manrope", "Inter", -apple-system, sans-serif;
+        --emoji: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+
+        /* Craigslist accent — purple */
+        --accent:   #7B2D8B;
+        --accent-h: #6A2578;
+        --accent-2: #9B4DCA;
+
+        /* section backgrounds */
+        --bg-1: #F9F4FB;
+        --bg-2: #F5EFF9;
+        --bg-3: #F2EAF7;
+      }
+
+      html { scroll-behavior: smooth; }
+      body {
+        font-family: var(--font);
+        background: #fafaf8;
+        color: var(--black);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overflow-x: hidden;
+      }
+
+      /* CURSOR */
+      body { cursor: none; }
+      a, button { cursor: none; }
+      .cursor-dot {
+        width: 8px; height: 8px;
+        background: rgba(28,28,30,0.85);
+        border-radius: 50%;
+        position: fixed; left: -100px; top: -100px;
+        pointer-events: none; z-index: 10000;
+        transform: translate(-50%, -50%);
+        transition: transform 0.1s ease, opacity 0.3s ease;
+      }
+
+      /* NAV */
+      .nav {
+        position: fixed; inset: 0 0 auto 0; z-index: 100;
+        background: rgba(255,255,255,0.82);
+        backdrop-filter: saturate(180%) blur(20px);
+        -webkit-backdrop-filter: saturate(180%) blur(20px);
+        border-bottom: 1px solid rgba(0,0,0,0.08);
+        transition: border-color 0.3s;
+      }
+      #scroll-progress {
+        position: absolute; bottom: -1px; left: 0;
+        height: 2.5px; width: 0%;
+        background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
+        border-radius: 0 2px 2px 0;
+        transition: width 0.08s linear; z-index: 101;
+      }
+      .nav-inner {
+        max-width: 1080px; margin: 0 auto; padding: 0 24px;
+        height: 52px; display: flex; align-items: center; gap: 32px;
+      }
+      .nav-inner a {
+        text-decoration: none; color: var(--black);
+        font-size: 14px; opacity: 0.75; transition: opacity 0.2s; position: relative;
+      }
+      .nav-inner a::after {
+        content: ''; position: absolute; bottom: -2px; left: 0;
+        width: 100%; height: 1.5px; background: var(--accent);
+        transform: scaleX(0); transform-origin: left; transition: transform 0.25s ease;
+      }
+      .nav-inner a:hover { opacity: 1; }
+      .nav-inner a:hover::after { transform: scaleX(1); }
+
+      /* LAYOUT */
+      .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+      section { padding: 108px 24px; }
+
+      .section-label { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+      .section-num {
+        font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--accent); white-space: nowrap;
+      }
+      .section-rule { height: 1px; background: var(--border); flex: 1; }
+
+      h2.display {
+        font-family: var(--font-display);
+        font-size: clamp(30px, 5vw, 52px);
+        font-weight: 700; letter-spacing: -0.025em; line-height: 1.08;
+        color: var(--black); margin-bottom: 20px;
+      }
+      p.lead { font-size: 17px; line-height: 1.75; color: var(--gray); max-width: 660px; }
+      .em { font-family: var(--emoji); font-style: normal; display: inline-block; }
+
+      /* HERO */
+      .hero { padding: 148px 24px 96px; max-width: 1080px; margin: 0 auto; }
+      .hero::before {
+        content: ''; position: fixed; inset: 0;
+        background: radial-gradient(ellipse at 60% 0%, rgba(240,253,250,0.9) 0%, transparent 55%),
+                    radial-gradient(ellipse at 20% 30%, rgba(240,253,244,0.5) 0%, transparent 50%);
+        pointer-events: none; z-index: -1;
+      }
+      .hero-eyebrow {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: linear-gradient(135deg, rgba(123,45,139,0.1), rgba(155,77,202,0.08));
+        color: var(--accent); border: 1px solid rgba(123,45,139,0.2);
+        font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+        padding: 7px 16px; border-radius: 100px; margin-bottom: 28px;
+        transition: background 0.3s, transform 0.2s;
+      }
+      .hero-eyebrow:hover { transform: translateY(-1px); }
+      .hero-title {
+        font-family: var(--font-display);
+        font-size: clamp(38px, 6.5vw, 72px);
+        font-weight: 700; line-height: 1.05; letter-spacing: -0.03em;
+        color: var(--black); margin-bottom: 22px;
+      }
+      .hero-title-gradient {
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      }
+      .hero-sub {
+        font-size: 21px; color: var(--gray); font-weight: 400;
+        line-height: 1.5; margin-bottom: 36px; max-width: 680px;
+      }
+      .hero-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 56px; }
+      .meta-pill {
+        display: inline-flex; align-items: center; gap: 7px; padding: 8px 16px;
+        border-radius: 100px; border: 1px solid rgba(0,0,0,0.08); background: var(--white);
+        font-size: 13px; font-weight: 500; color: var(--black); box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      }
+      .meta-pill-label {
+        font-size: 11px; font-weight: 600; text-transform: uppercase;
+        letter-spacing: 0.08em; color: var(--gray);
+      }
+      .hero-frame {
+        border-radius: 20px; overflow: hidden;
+        box-shadow: 0 32px 88px rgba(123,45,139,0.18), 0 0 0 1px rgba(0,0,0,0.04);
+        animation: float 6s ease-in-out infinite;
+      }
+      .hero-frame img { width: 100%; display: block; }
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50%       { transform: translateY(-10px); }
+      }
+
+      /* BACKGROUNDS */
+      .bg-1 { background: var(--bg-1); }
+      .bg-2 { background: var(--bg-2); }
+      .bg-3 { background: var(--bg-3); }
+
+      /* ROLE CARD */
+      .role-card {
+        background: var(--white); border-radius: 18px; padding: 28px 32px;
+        box-shadow: 0 2px 24px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.05);
+        border-top: 3px solid var(--accent); transition: transform 0.25s, box-shadow 0.25s;
+      }
+      .role-card:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(123,45,139,0.12); }
+      .role-card-title {
+        display: flex; align-items: center; gap: 8px;
+        font-size: 14px; font-weight: 600; color: var(--black); margin-bottom: 18px;
+      }
+      .role-list { list-style: none; display: flex; flex-direction: column; gap: 13px; }
+      .role-list li {
+        display: flex; gap: 12px; font-size: 14.5px; line-height: 1.6; color: var(--gray);
+        border-radius: 6px; padding: 3px 4px 3px 0; margin: 0 -4px; transition: background 0.2s;
+      }
+      .role-list li:hover { background: rgba(123,45,139,0.04); }
+      .dot {
+        width: 5px; height: 5px; border-radius: 50%; background: var(--accent);
+        flex-shrink: 0; margin-top: 9px; transition: transform 0.2s;
+      }
+      .role-list li:hover .dot { transform: scale(1.5); }
+
+      /* TWO-COL */
+      .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; margin-top: 52px; }
+      @media (max-width: 720px) { .two-col { grid-template-columns: 1fr; gap: 40px; } }
+
+      /* THREE-COL */
+      .three-col { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-top: 44px; }
+      @media (max-width: 640px) { .three-col { grid-template-columns: 1fr; } }
+
+      /* TILES */
+      .tile {
+        border-radius: 16px; padding: 28px 24px; background: var(--white);
+        box-shadow: 0 2px 20px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.04);
+        border-top: 3px solid var(--accent); transition: transform 0.25s, box-shadow 0.25s;
+      }
+      .tile:hover { transform: translateY(-5px); box-shadow: 0 14px 36px rgba(123,45,139,0.12); }
+      .tile-icon { font-size: 32px; display: block; margin-bottom: 14px; }
+      .tile-icon img { width: 32px; height: 32px; display: block; }
+      .emoji-svg { width: 1em; height: 1em; vertical-align: middle; display: inline-block; object-fit: contain; }
+      .check img, .check svg { width: 16px; height: 16px; display: inline-block; vertical-align: middle; }
+      .tile h4 { font-size: 16px; font-weight: 700; color: var(--black); letter-spacing: -0.01em; margin-bottom: 8px; }
+      .tile p { font-size: 14px; line-height: 1.7; color: var(--gray); }
+
+      /* KEY BANNER */
+      .key-q {
+        margin-top: 52px; padding: 64px 52px;
+        background: linear-gradient(135deg, var(--accent) 0%, #4A1560 100%);
+        border-radius: 24px; text-align: center; position: relative; overflow: hidden;
+        box-shadow: 0 24px 64px rgba(123,45,139,0.28);
+      }
+      .key-q::before {
+        content: '\201C'; position: absolute; font-size: 300px; font-weight: 800;
+        color: rgba(255,255,255,0.06); line-height: 1; top: -60px; right: 24px;
+        font-family: Georgia, serif; pointer-events: none;
+      }
+      .key-q::after {
+        content: ''; position: absolute; inset: 0;
+        background: radial-gradient(ellipse at 30% 0%, rgba(255,255,255,0.1) 0%, transparent 60%);
+        pointer-events: none;
+      }
+      .key-q-label {
+        font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em;
+        color: rgba(255,255,255,0.6); margin-bottom: 22px;
+        display: flex; align-items: center; justify-content: center; gap: 7px; position: relative; z-index: 1;
+      }
+      .key-q-text {
+        font-family: var(--font-display); font-size: clamp(20px, 3vw, 30px); font-weight: 600;
+        color: #fff; line-height: 1.5; letter-spacing: -0.02em;
+        max-width: 680px; margin: 0 auto; position: relative; z-index: 1;
+      }
+
+      /* CALLOUT */
+      .callout {
+        margin-top: 40px; padding: 32px 40px; background: var(--white); border-radius: 16px;
+        border-left: 4px solid var(--accent);
+        box-shadow: 0 2px 20px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04);
+        position: relative; transition: transform 0.25s, box-shadow 0.25s;
+      }
+      .callout::before {
+        content: '\201C'; position: absolute; top: -12px; right: 24px;
+        font-size: 120px; font-weight: 800; color: rgba(123,45,139,0.07);
+        line-height: 1; font-family: Georgia, serif; pointer-events: none;
+      }
+      .callout p { font-size: 17px; line-height: 1.82; color: var(--black); font-style: italic; position: relative; z-index: 1; }
+      .callout:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(123,45,139,0.1); }
+
+      /* HEURISTIC TABLE */
+      .heuristic-table {
+        margin-top: 52px; border-radius: 18px; overflow: hidden;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.05);
+      }
+      .heuristic-head {
+        display: grid; grid-template-columns: 1.2fr 1.4fr 1.2fr 0.6fr;
+        background: linear-gradient(135deg, var(--accent), #4A1560);
+        padding: 14px 28px; gap: 20px;
+      }
+      .heuristic-head span {
+        font-size: 11px; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.1em; color: rgba(255,255,255,0.7);
+      }
+      .h-row {
+        display: grid; grid-template-columns: 1.2fr 1.4fr 1.2fr 0.6fr;
+        padding: 22px 28px; gap: 20px; background: var(--white);
+        border-top: 1px solid rgba(0,0,0,0.05); transition: background 0.2s; align-items: start;
+      }
+      .h-row:hover { background: var(--bg-1); }
+      .h-name { font-size: 14.5px; font-weight: 600; color: var(--black); }
+      .h-obs, .h-rec { font-size: 13.5px; line-height: 1.65; color: var(--gray); }
+      .severity {
+        display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 12px;
+        border-radius: 100px; letter-spacing: 0.04em;
+      }
+      .sev-critical { background: #FEF2F2; color: #DC2626; }
+      .sev-fail     { background: #FFF7ED; color: #EA580C; }
+      .sev-warning  { background: #FEFCE8; color: #CA8A04; }
+      @media (max-width: 640px) { .heuristic-head { display: none; } .h-row { grid-template-columns: 1fr; gap: 8px; } }
+
+      /* PERSONA */
+      .persona-card {
+        background: var(--white); border-radius: 20px; overflow: hidden;
+        box-shadow: 0 4px 32px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04);
+        display: grid; grid-template-columns: 300px 1fr; margin-top: 52px;
+        align-items: start;
+      }
+      @media (max-width: 720px) { .persona-card { grid-template-columns: 1fr; } }
+      .persona-card::before {
+        content: ''; display: block; grid-column: span 2; height: 5px;
+        background: linear-gradient(90deg, #7B2D8B 0%, #C026D3 30%, #F97316 65%, #FBBF24 100%);
+      }
+      .persona-left {
+        padding: 32px 28px 36px; border-right: 1px solid rgba(0,0,0,0.07);
+        display: flex; flex-direction: column; gap: 16px;
+      }
+      .persona-avatar-wrap {
+        width: 130px; height: 130px; border-radius: 50%;
+        background: #F0EEED;
+        display: flex; align-items: center; justify-content: center; overflow: hidden;
+      }
+      .persona-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+      .persona-name { font-family: var(--font-display); font-size: 28px; font-weight: 800; color: var(--black); letter-spacing: -0.02em; }
+      .persona-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+      .persona-tag-pill {
+        display: inline-block; font-size: 12px; font-weight: 500; color: var(--accent);
+        background: rgba(123,45,139,0.07); border: 1px solid rgba(123,45,139,0.18);
+        padding: 4px 14px; border-radius: 100px;
+      }
+      .persona-bio { font-size: 13.5px; line-height: 1.72; color: var(--gray); }
+      .persona-behaviours { margin-top: 4px; }
+      .persona-behaviours h5 {
+        font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.12em; color: var(--black); margin-bottom: 12px;
+      }
+      .behaviour-list { list-style: disc; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; }
+      .behaviour-list li { font-size: 13px; line-height: 1.6; color: var(--gray); }
+      .persona-right { padding: 32px 36px 36px; display: flex; flex-direction: column; gap: 0; }
+      .persona-open-quote {
+        display: block; margin-bottom: 12px;
+      }
+      .persona-headline-quote p {
+        font-size: clamp(17px, 1.8vw, 20px); font-weight: 400;
+        line-height: 1.55; color: var(--black); margin-bottom: 28px;
+      }
+      .persona-frustrations h5 {
+        font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.12em; color: var(--black); margin-bottom: 14px;
+      }
+      .frustration-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+      .frustration-list li {
+        display: flex; align-items: flex-start; gap: 12px;
+        font-size: 13.5px; line-height: 1.6; color: var(--gray);
+        padding: 13px 16px; background: #FFFDF5;
+        border-radius: 10px; border: 1px solid rgba(0,0,0,0.05);
+      }
+      .frustration-list li .f-icon { font-family: var(--emoji); font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+      .persona-goal {
+        margin-top: 20px; padding-top: 20px;
+        border-top: 1px solid rgba(0,0,0,0.08);
+        display: flex; align-items: flex-start; gap: 12px;
+      }
+      .persona-goal-icon { font-family: var(--emoji); font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+      .persona-goal-label {
+        font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.12em; color: var(--black); margin-bottom: 6px;
+      }
+      .persona-goal p { font-size: 14px; line-height: 1.65; color: var(--gray); }
+
+      /* NEWS QUOTES */
+      .quotes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 44px; }
+      @media (max-width: 560px) { .quotes-grid { grid-template-columns: 1fr; } }
+      .quote-card {
+        padding: 36px 32px; background: var(--white); position: relative; overflow: hidden;
+        transition: background 0.25s;
+      }
+      .quote-card:hover { background: var(--bg-1); }
+      .quote-card::before {
+        content: '\201C'; position: absolute; top: 8px; right: 20px;
+        font-size: 120px; font-weight: 800; color: rgba(123,45,139,0.08);
+        line-height: 1; font-family: Georgia, serif; pointer-events: none;
+      }
+      .quote-card p { font-size: 15px; line-height: 1.72; color: var(--black); font-style: italic; position: relative; z-index: 1; margin-bottom: 18px; }
+      .quote-source {
+        font-size: 11px; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.12em; color: var(--accent); display: flex; align-items: center;
+        gap: 10px; position: relative; z-index: 1;
+      }
+      .quote-source::before { content: '—'; font-size: 13px; }
+
+      /* COMPETITOR TABLE */
+      .comp-table {
+        margin-top: 52px; border-radius: 18px; overflow: hidden;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.05);
+      }
+      .comp-head {
+        display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr;
+        background: linear-gradient(135deg, var(--accent), #4A1560);
+        padding: 14px 28px; gap: 16px;
+      }
+      .comp-head span { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.7); }
+      .comp-row {
+        display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr;
+        padding: 18px 28px; gap: 16px; background: var(--white);
+        border-top: 1px solid rgba(0,0,0,0.05); align-items: center; transition: background 0.2s;
+      }
+      .comp-row:hover { background: var(--bg-1); }
+      .comp-name { font-size: 14px; font-weight: 600; color: var(--black); }
+      .check { font-family: var(--emoji); font-size: 16px; }
+      @media (max-width: 640px) { .comp-head { display: none; } .comp-row { grid-template-columns: 1fr; gap: 6px; } }
+
+      /* DESIGN STRATEGY CARDS */
+      .strategy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 44px; }
+      @media (max-width: 560px) { .strategy-grid { grid-template-columns: 1fr; } }
+      .strategy-card {
+        background: var(--white); border-radius: 18px; padding: 32px 28px;
+        box-shadow: 0 2px 20px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04);
+        border-top: 3px solid var(--accent); transition: transform 0.25s, box-shadow 0.25s;
+      }
+      .strategy-card:nth-child(2) { border-top-color: var(--accent-2); }
+      .strategy-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(123,45,139,0.12); }
+      .strategy-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 12px; }
+      .strategy-card:nth-child(2) .strategy-label { color: var(--accent-2); }
+      .strategy-card h4 { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--black); letter-spacing: -0.018em; margin-bottom: 16px; }
+      .strategy-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+      .strategy-list li { display: flex; gap: 10px; font-size: 14px; line-height: 1.6; color: var(--gray); }
+      .strategy-list li::before { content: '→'; color: var(--accent); font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+      .strategy-card:nth-child(2) .strategy-list li::before { color: var(--accent-2); }
+
+      /* SCREEN CARDS */
+      .screens-grid { display: grid; grid-template-columns: 1fr; gap: 24px; margin-top: 52px; }
+      .screen-card {
+        background: var(--white); border-radius: 18px; overflow: hidden;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04);
+        transition: transform 0.25s, box-shadow 0.25s;
+      }
+      .screen-card:hover { transform: translateY(-5px); box-shadow: 0 16px 48px rgba(123,45,139,0.14); }
+      .screen-card img { width: 100%; display: block; }
+      .screen-card-imgs { display: flex; flex-direction: column; gap: 0; }
+      .screen-card-imgs img { display: block; }
+      .screen-card-body { padding: 24px 24px 28px; }
+      .screen-num { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 8px; }
+      .screen-card h4 { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--black); letter-spacing: -0.015em; margin-bottom: 8px; }
+      .screen-card p { font-size: 13.5px; line-height: 1.68; color: var(--gray); }
+
+      /* VALIDATION QUOTES */
+      .val-grid { display: grid; grid-template-columns: repeat(3,1fr); margin-top: 44px; }
+      @media (max-width: 640px) { .val-grid { grid-template-columns: 1fr; } }
+      .val-card {
+        padding: 32px 28px; background: var(--white); position: relative; overflow: hidden;
+        transition: background 0.25s;
+      }
+      .val-card:not(:last-child) { border-right: 1px solid rgba(0,0,0,0.05); }
+      .val-card:hover { background: var(--bg-1); }
+      .val-card::before {
+        content: '\201C'; position: absolute; top: 4px; right: 16px;
+        font-size: 110px; font-weight: 800; color: rgba(123,45,139,0.07);
+        line-height: 1; font-family: Georgia, serif; pointer-events: none;
+      }
+      .val-card p { font-size: 14.5px; line-height: 1.7; color: var(--black); font-style: italic; position: relative; z-index: 1; margin-bottom: 16px; }
+      .val-attr {
+        font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+        color: var(--accent); display: flex; align-items: center; gap: 8px;
+        position: relative; z-index: 1;
+      }
+      .val-attr::before { content: '—'; font-size: 13px; }
+
+      /* NEXT STEPS */
+      .next-steps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 44px; }
+      @media (max-width: 560px) { .next-steps-grid { grid-template-columns: 1fr; } }
+      .next-step-card {
+        background: var(--white); border-radius: 16px; padding: 28px 26px;
+        box-shadow: 0 2px 20px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04);
+        border-top: 3px solid var(--accent); transition: transform 0.25s, box-shadow 0.25s;
+      }
+      .next-step-card:nth-child(2) { border-top-color: var(--accent-2); }
+      .next-step-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(123,45,139,0.1); }
+      .priority-badge {
+        display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 12px;
+        border-radius: 100px; letter-spacing: 0.04em; margin-bottom: 14px;
+      }
+      .priority-high { background: #FEF2F2; color: #DC2626; }
+      .priority-med  { background: #FFF7ED; color: #EA580C; }
+      .next-step-card h4 { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--black); letter-spacing: -0.015em; margin-bottom: 10px; }
+      .next-step-card p { font-size: 14px; line-height: 1.7; color: var(--gray); }
+
+      /* REFLECTION */
+      .bg-reflection {
+        background: linear-gradient(135deg, var(--accent) 0%, #4A1560 100%);
+        position: relative; overflow: hidden;
+      }
+      .bg-reflection::before {
+        content: ''; position: absolute; inset: 0;
+        background: radial-gradient(ellipse at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 60%),
+                    radial-gradient(ellipse at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 50%);
+        pointer-events: none;
+      }
+      .bg-reflection .section-num { color: rgba(255,255,255,0.5); }
+      .bg-reflection .section-rule { background: rgba(255,255,255,0.15); }
+      .reflection-list { margin-top: 52px; display: flex; flex-direction: column; gap: 0; position: relative; z-index: 1; }
+      .reflection-item {
+        display: grid; grid-template-columns: 48px 1fr;
+        gap: 28px; align-items: start;
+        padding: 36px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        transition: padding-left 0.3s ease;
+      }
+      .reflection-item:first-child { padding-top: 0; }
+      .reflection-item:last-child { border-bottom: none; }
+      .reflection-item:hover { padding-left: 6px; }
+      .reflection-num {
+        font-family: var(--font-display); font-size: 13px; font-weight: 700;
+        color: rgba(255,255,255,0.35); letter-spacing: 0.05em; padding-top: 4px;
+      }
+      .reflection-item h4 {
+        font-family: var(--font-display); font-size: clamp(18px, 2.2vw, 22px);
+        font-weight: 700; color: #fff; letter-spacing: -0.02em; margin-bottom: 10px; line-height: 1.2;
+      }
+      .reflection-item p { font-size: 15px; line-height: 1.75; color: rgba(255,255,255,0.72); max-width: 620px; }
+      .reflection-intro { position: relative; z-index: 1; max-width: 560px; }
+      .reflection-intro h2 {
+        font-family: var(--font-display); font-size: clamp(28px,4vw,44px);
+        font-weight: 700; color: #fff; letter-spacing: -0.025em; line-height: 1.15; margin-bottom: 16px;
+      }
+      .reflection-intro p { font-size: 17px; line-height: 1.75; color: rgba(255,255,255,0.7); }
+
+      /* NEXT PROJECT */
+      .next-wrap { border-top: 1px solid var(--border); padding: 88px 24px 100px; text-align: center; }
+      .next-eyebrow { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--gray); margin-bottom: 18px; }
+      .next-title { font-family: var(--font-display); font-size: clamp(22px,3vw,36px); font-weight: 700; letter-spacing: -0.02em; color: var(--black); margin-bottom: 36px; }
+      .btn {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: var(--black); color: var(--white); text-decoration: none;
+        font-size: 15px; font-weight: 500; padding: 13px 26px; border-radius: 980px;
+        transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      }
+      .btn:hover { background: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(123,45,139,0.35); }
+
+      /* ANIMATIONS */
+      .fi {
+        opacity: 0; transform: translateY(26px);
+        transition: opacity 0.72s cubic-bezier(.25,.46,.45,.94), transform 0.72s cubic-bezier(.25,.46,.45,.94);
+      }
+      .fi.visible { opacity: 1; transform: translateY(0); }
+      .fi.d1 { transition-delay: 0.1s; }
+      .fi.d2 { transition-delay: 0.2s; }
+      .fi.d3 { transition-delay: 0.3s; }
+    </style>
+  </head>
+  <body>
+    <div class="cursor-dot" id="cursorDot"></div>
+
+    <nav class="nav">
+      <div id="scroll-progress"></div>
+      <div class="nav-inner">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="index.html#work">Work</a>
+        <a href="https://www.linkedin.com/in/devayanigadgil/" target="_blank" rel="noreferrer">LinkedIn</a>
+        <a href="https://drive.google.com/file/d/11PGwqLmwvMYQaErkrKrK5y4hbc7udurR/view?usp=sharing" target="_blank" rel="noreferrer">Resume</a>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <div class="hero">
+      <span class="hero-eyebrow fi">Case Study · UX Design · E-Commerce</span>
+      <h1 class="hero-title fi d1">Rebuilding<br><span class="hero-title-gradient">Trust</span></h1>
+      <p class="hero-sub fi d2">Redesigning Craigslist to restore trust and improve usability in a marketplace that everyone recognises but nobody fully trusts</p>
+      <div class="hero-meta fi d2">
+        <span class="meta-pill"><span class="meta-pill-label">Role</span> UX Designer</span>
+        <span class="meta-pill"><span class="meta-pill-label">Type</span> Redesign Concept</span>
+        <span class="meta-pill"><span class="meta-pill-label">Focus</span> Trust &amp; Usability</span>
+        <span class="meta-pill"><span class="meta-pill-label">Method</span> Heuristic Evaluation</span>
+      </div>
+      <div class="hero-frame fi d3">
+        <img src="assets/images/craigslist-landingpage.png" alt="Craigslist redesign" />
+      </div>
+    </div>
+
+    <!-- 01 CONTEXT -->
+    <section class="bg-1">
+      <div class="wrap">
+        <div class="section-label fi">
+          <span class="section-num">01 — Context</span>
+          <span class="section-rule"></span>
+        </div>
+        <h2 class="display fi">Recognised by everyone.<br>Trusted by almost no one.</h2>
+
+        <div class="two-col fi">
+          <div>
+            <p class="lead">Craigslist is one of the most visited websites in the US. It's also one of the most distrusted. People don't avoid it because the prices are worse than Facebook Marketplace or OfferUp. They avoid it because it doesn't feel safe. That's a design problem.</p>
+            <p class="lead" style="margin-top:18px;">This project started with a simple question: what would Craigslist look like if it were rebuilt today with trust and usability at the center, while keeping the raw, no-frills character that made it useful in the first place?</p>
+          </div>
+          <div class="fi d2">
+            <div class="role-card">
+              <p class="role-card-title"><img src="assets/images/emojis/Artist%20Palette.svg" alt="" class="emoji-svg" style="width:1em;height:1em;" /> My Role</p>
+              <ul class="role-list">
+                <li><span class="dot"></span><span>Conducted a heuristic evaluation of the existing Craigslist interface</span></li>
+                <li><span class="dot"></span><span>Researched competitor trust and safety features</span></li>
+                <li><span class="dot"></span><span>Developed a user persona grounded in realistic frustrations</span></li>
+                <li><span class="dot"></span><span>Designed key screens addressing usability and trust gaps</span></li>
+                <li><span class="dot"></span><span>Ran informal validation sessions with participants</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="key-q fi" style="margin-top:52px;">
+          <p class="key-q-label"><img src="assets/images/emojis/Gem%20Stone.svg" alt="" class="emoji-svg" style="width:0.9em;height:0.9em;" /> The Core Question</p>
+          <p class="key-q-text">What would Craigslist look like today if it were rebuilt with trust and usability at the center — without losing the simplicity that made it work?</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 HEURISTIC EVALUATION -->
+    <section>
+      <div class="wrap">
+        <div class="section-label fi">
+          <span class="section-num">02 — Heuristic Evaluation</span>
+          <span class="section-rule"></span>
+        </div>
+        <h2 class="display fi">Mapping what's broken<br>against Nielsen's 10.</h2>
+        <p class="lead fi">Before sketching anything, I audited the current interface against Nielsen's 10 Usability Heuristics. The problems weren't subtle. Three stood out as critical enough to shape the entire design direction.</p>
+
+        <div class="three-col" style="margin-top:44px;">
+          <div class="tile fi">
+            <span class="tile-icon"><img src="assets/images/emojis/Brain.svg" alt="" /></span>
+            <h4>Cognitive Overload</h4>
+            <p>Walls of tiny text with no visual hierarchy or breathing room. Users have to work to extract basic information from every listing.</p>
+          </div>
+          <div class="tile fi d1">
+            <span class="tile-icon"><img src="assets/images/emojis/Card%20Index%20Dividers.svg" alt="" /></span>
+            <h4>Unstructured IA</h4>
+            <p>Hundreds of categories with no logical grouping. Users either know exactly where to look or get lost immediately.</p>
+          </div>
+          <div class="tile fi d2">
+            <span class="tile-icon"><img src="assets/images/emojis/Unlocked.png" alt="" /></span>
+            <h4>No Trust Cues</h4>
+            <p>Complete anonymity at every step. No profiles, no verification, no accountability. The platform creates the conditions for fraud rather than preventing them.</p>
+          </div>
+        </div>
+
+        <div class="heuristic-table fi" style="margin-top:48px;">
+          <div class="heuristic-head">
+            <span>Heuristic</span>
+            <span>Observation</span>
+            <span>Recommendation</span>
+            <span>Severity</span>
+          </div>
+          <div class="h-row">
+            <p class="h-name">Error Prevention</p>
+            <p class="h-obs">The system allows anonymous posting with no verification, creating conditions that are easy to exploit for fraud.</p>
+            <p class="h-rec">Eliminate the error-prone condition via verified profiles and optional ID checks.</p>
+            <span class="severity sev-critical">Critical</span>
+          </div>
+          <div class="h-row">
+            <p class="h-name">Aesthetic &amp; Minimalist Design</p>
+            <p class="h-obs">Irrelevant links and visual clutter compete with listings. Poor signal-to-noise ratio throughout.</p>
+            <p class="h-rec">Remove distracting elements. Prioritise image and price as the primary scanning anchors.</p>
+            <span class="severity sev-fail">Fail</span>
+          </div>
+          <div class="h-row">
+            <p class="h-name">Consistency &amp; Standards</p>
+            <p class="h-obs">No standard visual hierarchy. Users can't distinguish between headers, links, and body text at a glance.</p>
+            <p class="h-rec">Adopt a consistent typographic scale that matches user expectations from modern web interfaces.</p>
+            <span class="severity sev-warning">Warning</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 TRUST IN THE NEWS -->
+    <section class="bg-2">
+      <div class="wrap">
+        <div class="section-label fi">
+          <span class="section-num">03 — Why Trust Matters</span>
+          <span class="section-rule"></span>
+        </div>
+        <h2 class="display fi">The problem isn't<br>hypothetical.</h2>
+        <p class="lead fi">Craigslist's trust issues have been widely reported. I reviewed articles covering scams, safety incidents, and the platform's declining relevance against competitors who have made safety a core feature. A few consistent themes kept coming up.</p>
+
+        <div style="background:var(--white);border-radius:20px;overflow:hidden;box-shadow:0 2px 20px rgba(0,0,0,0.06),0 0 0 1px rgba(0,0,0,0.04);margin-top:44px;" class="fi">
+          <div class="quotes-grid" style="margin-top:0;">
+            <div class="quote-card" style="border-bottom:1px solid rgba(0,0,0,0.05);border-right:1px solid rgba(0,0,0,0.05);">
+              <p>"Craigslist's biggest problem is trust. People don't feel safe meeting strangers from an anonymous listing."</p>
+              <p class="quote-source">Consumer Reviews</p>
+            </div>
+            <div class="quote-card" style="border-bottom:1px solid rgba(0,0,0,0.05);">
+              <p>"Craigslist has fallen behind competitors who now offer integrated profiles and verification as standard."</p>
+              <p class="quote-source">Market Analysis</p>
+            </div>
+            <div class="quote-card" style="border-right:1px solid rgba(0,0,0,0.05);">
+              <p>"The anonymity, lack of seller verification, and prevalence of scams are major deterrents for new users."</p>
+              <p class="quote-source">User Sentiment</p>
+            </div>
+            <div class="quote-card">
+              <p>"An outdated, frustrating interface that hasn't meaningfully changed since the early 2000s."</p>
+              <p class="quote-source">Tech Press</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout fi">
+          <p>The pattern across all of it: people aren't leaving Craigslist because it's too expensive or too niche. They're leaving because it makes them feel like something bad could happen and there would be no recourse.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 USER PERSONA -->
+    <section>
+      <div class="wrap">
+        <div class="section-label fi">
+          <span class="section-num">04 — Understanding the User</span>
+          <span class="section-rule"></span>
+        </div>
+        <h2 class="display fi">Who actually uses this.</h2>
+        <p class="lead fi">Rather than designing for an abstract user, I built a persona grounded in a realistic scenario: someone who needs Craigslist to work, but has every reason to distrust it.</p>
+
+        <div class="fi" style="border-radius:20px;overflow:hidden;margin-top:48px;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+          <img src="assets/images/persona.svg" alt="User persona" style="width:100%;display:block;" />
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 COMPETITOR ANALYSIS -->
+    <section class="bg-1">
+      <div class="wrap">
+        <div class="section-label fi">
+          <span class="section-num">05 — Learning from Competitors</span>
+          <span class="section-rule"></span>
+        </div>
+        <h2 class="display fi">Everyone else solved<br>the identity problem.</h2>
+        <p class="lead fi">I benchmarked Craigslist against Facebook Marketplace, OfferUp, and eBay to understand what features modern users now expect as standard. The gap was clear.</p>
+
+        <div class="comp-table fi">
+          <div class="comp-head">
+            <span>Platform</span>
+            <span>Real Profiles</span>
+            <span>Ratings &amp; Reviews</span>
+            <span>In-app Messaging</span>
+            <span>ID Verification</span>
+          </div>
+          <div class="comp-row">
+            <p class="comp-name">Facebook Marketplace</p>
+            <span class="check"><img src="assets/images/emojis/Check%20Mark%20Button.svg" alt="" /></span><span class="check"><img src="assets/images/emojis/Check%20Mark%20Button.svg" alt="" /></span><span class="check"><img src="assets/images/emojis/Check%20Mark%20Button.svg" alt="" /></span><span class="check"><img src="assets/images/emojis/Triangular%20Flag.png" alt="" /></span>
+          </div>
+          <div class="comp-row">
+            <p class="comp-name">OfferUp</p>
+            <span class="check"><img src="assets/images/emojis/Check%20Mark%20Button.svg" alt="" /></span><span class="check"><img src="assets/images/emojis/Check%20Mark%20Button.svg" alt="" /></span><span class="check"><img src="assets/images/emojis/Check%20Mark%20Button.svg" alt="" /></span><span class="check"><img src="assets/images/emojis/Check%20Mark%20Button.svg" alt="" /></span>
+          </div>
+          <div class="comp-row">
+            <p class="comp-name">eBay</p>
+            <span class="check"><img src="assets/images/emojis/Check%20Mark%20Button.svg" alt="" /></span><span class="check"><img src="assets/images/emojis/Check%20Mark%20Button.svg" alt="" /></span><span class="check"><img src="assets/images/emojis/Check%20Mark%20Button.svg" alt="" /></span><span class="check"><img src="assets/images/emojis/Check%20Mark%20Button.svg" alt="" /></span>
+          </div>
+          <div class="comp-row" style="background:#FFF8F8;color:#DC2626;">
+            <p class="comp-name" style="color:#DC2626;">Craigslist</p>
+            <span class="check"><img src="assets/images/emojis/Cross%20Mark.svg" alt="" /></span><span class="check"><img src="assets/images/emojis/Cross%20Mark.svg" alt="" /></span><span class="check"><img src="assets/images/emojis/Cross%20Mark.svg" alt="" /></span><span class="check"><img src="assets/images/emojis/Cross%20Mark.svg" alt="" /></span>
+          </div>
+        </div>
+
+        <div class="callout fi">
+          <p>Every competitor has built some system of accountability. Craigslist is the only major platform that remains almost entirely anonymous. That's not a feature. It's the gap.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 DESIGN STRATEGY -->
+    <section class="bg-3">
+      <div class="wrap">
+        <div class="section-label fi">
+          <span class="section-num">06 — Design Strategy</span>
+          <span class="section-rule"></span>
+        </div>
+        <h2 class="display fi">Modernise without<br>losing the soul of it.</h2>
+        <p class="lead fi">The goal wasn't to turn Craigslist into eBay. Craigslist's raw, utilitarian character is part of what makes it distinctive. The strategy was to add the two things it genuinely lacks — usability structure and trust infrastructure — without over-designing everything else.</p>
+
+        <div class="strategy-grid">
+          <div class="strategy-card fi">
+            <p class="strategy-label">Pillar 01 — Usability</p>
+            <h4>Clarity through structure</h4>
+            <ul class="strategy-list">
+              <li>Larger, modern typographic scale</li>
+              <li>Logical category grouping with clear headers</li>
+              <li>Scannable listing cards with image, price, and condition upfront</li>
+              <li>Generous whitespace without losing density</li>
+            </ul>
+          </div>
+          <div class="strategy-card fi d1">
+            <p class="strategy-label">Pillar 02 — Trust</p>
+            <h4>Safety through transparency</h4>
+            <ul class="strategy-list">
+              <li>Verified seller system with a visible badge on listings</li>
+              <li>Profile previews showing listing history before clicking</li>
+              <li>Frictionless 3-step verification flow</li>
+              <li>Safety prompts embedded in the messaging flow</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 THE REDESIGN -->
+    <section>
+      <div class="wrap">
+        <div class="section-label fi">
+          <span class="section-num">07 — The Redesign</span>
+          <span class="section-rule"></span>
+        </div>
+        <h2 class="display fi">Three screens that<br>do the heavy lifting.</h2>
+        <p class="lead fi">Rather than redesigning every surface, I focused on the three moments where the current experience loses people: arriving on the homepage, browsing listings, and deciding whether to trust a seller.</p>
+
+        <div class="screens-grid">
+          <div class="screen-card fi">
+            <img src="assets/images/craigslist1.png" alt="Redesigned Craigslist homepage" />
+            <div class="screen-card-body">
+              <p class="screen-num">Screen 01</p>
+              <h4>A welcoming entry point</h4>
+              <p>The homepage keeps the familiar directory structure but introduces visual hierarchy through grouping, clear headers, and intentional whitespace. It still feels like Craigslist, just one you can actually read.</p>
+            </div>
+          </div>
+          <div class="screen-card fi">
+            <img src="assets/images/craigslist2.png" alt="Listings with visual cards" />
+            <div class="screen-card-body">
+              <p class="screen-num">Screen 02</p>
+              <h4>Visual cards and smart filters</h4>
+              <p>Listings now surface image, price, condition, and location upfront. A Verified Seller badge appears directly on the card, so trust assessment happens before the click, not after.</p>
+            </div>
+          </div>
+          <div class="screen-card fi d1">
+            <div class="screen-card-imgs">
+              <img src="assets/images/form2.png" alt="Verification flow" />
+              <img src="assets/images/form1.png" alt="Verification flow step" />
+            </div>
+            <div class="screen-card-body">
+              <p class="screen-num">Screen 03</p>
+              <h4>Frictionless verification flow</h4>
+              <p>A 3-step flow for earning the Verified badge. Connecting a phone number or social account creates accountability without requiring complex ID documents. Short steps reduce abandonment.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 08 VALIDATION -->
+    <section class="bg-1">
+      <div class="wrap">
+        <div class="section-label fi">
+          <span class="section-num">08 — Validation</span>
+          <span class="section-rule"></span>
+        </div>
+        <h2 class="display fi">What people said<br>when they saw it.</h2>
+        <p class="lead fi">Testing was informal and qualitative. Three participants walked through the redesigned screens and gave their reactions. The feedback was consistent across all three and pointed in the same direction.</p>
+
+        <div style="background:var(--white);border-radius:20px;overflow:hidden;box-shadow:0 2px 20px rgba(0,0,0,0.06),0 0 0 1px rgba(0,0,0,0.04);margin-top:44px;" class="fi">
+          <div class="val-grid" style="margin-top:0;">
+            <div class="val-card">
+              <p>"This feels so much safer. I actually know who I'm dealing with before I even message them."</p>
+              <p class="val-attr">Participant A</p>
+            </div>
+            <div class="val-card">
+              <p>"Much easier to browse. It's not overwhelming anymore. The spacing makes a real difference."</p>
+              <p class="val-attr">Participant B</p>
+            </div>
+            <div class="val-card">
+              <p>"It finally looks like something from this decade, but it still feels like Craigslist."</p>
+              <p class="val-attr">Participant C</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout fi">
+          <p>That last one was the most important to hear. The goal was never to turn this into a generic marketplace app. Participant C noticing that it still felt like Craigslist meant the redesign kept what was worth keeping.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 09 NEXT STEPS -->
+    <section class="bg-2">
+      <div class="wrap">
+        <div class="section-label fi">
+          <span class="section-num">09 — Next Steps</span>
+          <span class="section-rule"></span>
+        </div>
+        <h2 class="display fi">Where this goes next.</h2>
+        <p class="lead fi">The three screens address the biggest gaps, but two additional features would meaningfully extend the trust work without requiring a full platform overhaul.</p>
+
+        <div class="next-steps-grid">
+          <div class="next-step-card fi">
+            <span class="priority-badge priority-high">High Priority</span>
+            <h4>In-app Messaging</h4>
+            <p>Replacing anonymous email replies with a secure built-in chat keeps communication on-platform and creates an accountability trail without exposing personal contact details on either side.</p>
+          </div>
+          <div class="next-step-card fi d1">
+            <span class="priority-badge priority-med">Medium Priority</span>
+            <h4>Safe Meetup Suggestions</h4>
+            <p>Recommending verified "Safe Exchange Zones" directly in the chat flow, like police station parking lots or library lobbies, guides users toward safer in-person meetings without making it feel mandatory.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 REFLECTION -->
+    <section class="bg-reflection">
+      <div class="wrap">
+        <div class="section-label fi">
+          <span class="section-num">10 — Reflection</span>
+          <span class="section-rule"></span>
+        </div>
+        <div class="reflection-intro fi">
+          <h2>Three things this project taught me.</h2>
+          <p>Redesigning something with 20 years of history and a loyal user base is a different kind of problem than designing from scratch.</p>
+        </div>
+        <div class="reflection-list">
+          <div class="reflection-item fi">
+            <p class="reflection-num">01</p>
+            <div>
+              <h4>Trust is a feeling, not a feature</h4>
+              <p>Adding a "Verified" badge isn't enough on its own. Users need to feel safe at every step — through transparent communication, consistent feedback, and design that signals accountability before it's needed.</p>
+            </div>
+          </div>
+          <div class="reflection-item fi d1">
+            <p class="reflection-num">02</p>
+            <div>
+              <h4>Respect what already works</h4>
+              <p>Craigslist's directness is genuinely useful. The temptation in a redesign is to modernise everything. The harder skill is figuring out what not to change and why the original made sense.</p>
+            </div>
+          </div>
+          <div class="reflection-item fi d2">
+            <p class="reflection-num">03</p>
+            <div>
+              <h4>Emotional problems need emotional solutions</h4>
+              <p>The fear of being scammed isn't solved by a better filter sidebar. It's solved by design that addresses the anxiety directly, at the moment it's most acute, before the user has to ask for reassurance.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEXT PROJECT -->
+    <div class="next-wrap">
+      <p class="next-eyebrow fi">Next Case Study</p>
+      <p class="next-title fi">Designing Hirello.ai's foundation: how early UX insights<br>led to a major product pivot.</p>
+      <a href="hirello.html" class="btn fi">View Project →</a>
+    </div>
+
+    <script>
+      const cursorDot = document.getElementById('cursorDot');
+      if (window.matchMedia('(pointer: fine)').matches) {
+        document.addEventListener('mousemove', e => {
+          cursorDot.style.left = e.clientX + 'px';
+          cursorDot.style.top  = e.clientY + 'px';
+        });
+      } else { cursorDot.style.display = 'none'; }
+
+      const nav = document.querySelector('.nav');
+      const bar = document.getElementById('scroll-progress');
+      window.addEventListener('scroll', () => {
+        nav.style.borderBottomColor = window.scrollY > 8 ? 'rgba(0,0,0,0.14)' : 'rgba(0,0,0,0.08)';
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+      }, { passive: true });
+
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+      }, { threshold: 0.08, rootMargin: '0px 0px -36px 0px' });
+      document.querySelectorAll('.fi').forEach(el => io.observe(el));
+    </script>
+  </body>
+</html>
