@@ -51,7 +51,7 @@
     .b2{width:150px;height:150px;background:#fde8dc;bottom:40px;right:20%;animation-delay:-3s}
     .b3{width:120px;height:120px;background:#c8eef6;top:30%;left:55%;animation-delay:-6s}
     @keyframes bf{0%,100%{transform:translateY(0) rotate(0deg)}33%{transform:translateY(-12px) rotate(4deg)}66%{transform:translateY(6px) rotate(-3deg)}}
-    .hero-inner{position:relative;z-index:10;height:100%;display:grid;grid-template-columns:1.1fr 0.9fr;align-items:center;gap:40px;padding:60px 64px;max-width:1280px;margin:0 auto;width:100%;box-sizing:border-box}
+    .hero-inner{position:relative;z-index:10;height:100%;display:grid;grid-template-columns:1.1fr 0.9fr;align-items:center;gap:40px;padding:80px 64px;max-width:1280px;margin:0 auto;width:100%;box-sizing:border-box}
     .hero-nav{display:none}
     /* Top nav — matches case study pages */
     .site-nav{position:fixed;inset:0 0 auto 0;z-index:9000;background:rgba(255,255,255,0.82);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(0,0,0,0.08);transition:border-color .3s}
@@ -76,7 +76,7 @@
     .sdot-pulse{position:absolute;inset:0;border-radius:50%;background:#34d399;animation:sp 2.2s ease-in-out infinite;opacity:.4}
     .sdot-solid{position:relative;display:block;width:8px;height:8px;border-radius:50%;background:#10b981;z-index:1}
     @keyframes sp{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(2.2);opacity:0}}
-    .hero-h1{font-family:var(--display);font-size:clamp(28px,3.2vw,46px);font-weight:700;line-height:1.15;letter-spacing:-.03em;color:#1c1c1e;margin-top:28px;max-width:600px;animation:ti .9s cubic-bezier(.22,1,.36,1) .45s both}
+    .hero-h1{font-family:var(--display);font-size:clamp(24px,2.6vw,38px);font-weight:700;line-height:1.2;letter-spacing:-.03em;color:#1c1c1e;margin-top:28px;max-width:600px;animation:ti .9s cubic-bezier(.22,1,.36,1) .45s both}
     .grad-text{background:linear-gradient(135deg,#7c6cd4,#e07858);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
     .hero-bio{margin-top:24px;font-size:clamp(15px,1.8vw,20px);line-height:1.65;color:rgba(28,28,30,.65);max-width:620px;animation:ti .9s cubic-bezier(.22,1,.36,1) .6s both}
     .hero-cta-wrap{margin-top:40px;animation:ti .9s cubic-bezier(.22,1,.36,1) .75s both}
@@ -232,10 +232,11 @@
             <span class="sdot"><span class="sdot-pulse"></span><span class="sdot-solid"></span></span>
             <span style="font-size:12.5px;font-weight:500;color:#2d6a50;letter-spacing:-.01em">Open to opportunities</span>
           </div>
-          <h1 class="hero-h1">I design experiences with <span class="grad-text">curiosity, empathy,</span> and purpose.</h1>
-          <p class="hero-bio">Hi, I'm Devayani, Lead Product Designer at <strong style="color:#1c1c1e;font-weight:500">Hirello.ai</strong>, crafting AI-powered experiences that feel genuinely human.<br />I blend UX research and product thinking to turn messy problems into clear, intuitive solutions.</p>
+          <h1 class="hero-h1">AI Product Designer with<br><span class="grad-text">2+ years</span> of experience designing<br>SaaS workflows and intelligent systems.</h1>
+          <p class="hero-bio">I design <strong style="color:#1c1c1e;font-weight:500">data-heavy dashboards</strong>, <strong style="color:#1c1c1e;font-weight:500">AI-driven workflows</strong>, and <strong style="color:#1c1c1e;font-weight:500">end-to-end product experiences</strong> that improve decision-making and user efficiency.</p>
           <div class="hero-cta-wrap">
-            <a href="about.html" class="btn" style="height:52px;padding:0 28px;font-size:16px">Tell me more <span class="barr">↗</span></a>
+            <a href="#work" class="btn" style="height:52px;padding:0 28px;font-size:16px">View Work</a>
+            <a href="https://drive.google.com/file/d/11PGwqLmwvMYQaErkrKrK5y4hbc7udurR/view?usp=sharing" target="_blank" rel="noreferrer" class="btn" style="height:52px;padding:0 28px;font-size:16px;background:transparent;color:var(--text);border:1.5px solid rgba(28,28,30,0.2);">Resume</a>
           </div>
         </div>
         <!-- Right: Lottie animation -->
@@ -254,7 +255,7 @@
       <header class="work-header reveal">
         <p class="eyebrow">Selected Projects</p>
         <h2 class="work-h2">Work that speaks for itself.</h2>
-        <p class="work-sub">A collection of projects that reflect how I approach research, design, and problem-solving.</p>
+        <p class="work-sub" style="max-width:600px;white-space:nowrap;">End-to-end product experiences across AI, SaaS, and research.</p>
       </header>
   <!-- SKILLS TICKER -->
   <div class="ticker-wrap">
@@ -294,14 +295,14 @@
             <span class="tag tb">UX Strategy</span>
             <span class="tag tb">AI / B2C SaaS</span>
           </div>
-          <h3 class="proj-title">Designing Hirello.ai's foundation: how early UX insights led to a major product pivot.</h3>
-          <p class="proj-desc">I designed Hirello.ai's intelligent dashboard and personalized workflows for the MVP. Early research directly influenced the company's pivot toward networking intelligence.</p>
+          <h3 class="proj-title">Designing an AI-powered job search platform —<br>0 to MVP</h3>
+          <p class="proj-desc">Translated a 60+ page product vision into a working UX system, leading to a shift toward a networking-first product strategy.</p>
           <a href="hirello.html" class="proj-link">View Case Study ↗</a>
         </div>
       </article>
 
       <!-- 02 UMBC -->
-      <article class="proj flip reveal d1">
+      <article class="proj reveal d1">
         <div class="proj-img">
           <img src="assets/images/projectcards/umbcstudyabroad.png" alt="UMBC study abroad redesign" />
         </div>
@@ -311,8 +312,8 @@
             <span class="tag to">Service Design</span>
             <span class="tag to">Higher Ed</span>
           </div>
-          <h3 class="proj-title">Redesigning UMBC's study abroad process within real system constraints.</h3>
-          <p class="proj-desc">Improved student and staff workflows entirely within Terra Dotta, a rigid enterprise platform with no room for custom UI.</p>
+          <h3 class="proj-title">Redesigning a university study abroad system within platform constraints</h3>
+          <p class="proj-desc">Streamlined application workflows and reduced manual effort for staff through improved system structure and content design.</p>
           <a href="umbcstudyabroad.html" class="proj-link">View Case Study ↗</a>
         </div>
       </article>
@@ -328,14 +329,14 @@
             <span class="tag tp">HCI Research</span>
             <span class="tag tp">VR</span>
           </div>
-          <h3 class="proj-title">How a VR study on Wander revealed emotional connection as a key UX driver.</h3>
-          <p class="proj-desc">A usability and HCI research study using Meta Quest 3, uncovering the emotional power of immersive environments.</p>
+          <h3 class="proj-title">Evaluating user experience in VR navigation environments</h3>
+          <p class="proj-desc">Conducted usability testing to uncover friction in spatial navigation and interaction patterns in VR.</p>
           <a href="vrusabilitystudy.html" class="proj-link">View Case Study ↗</a>
         </div>
       </article>
 
       <!-- 04 Craigslist -->
-      <article class="proj flip reveal d3">
+      <article class="proj reveal d3">
         <div class="proj-img">
           <img src="assets/images/projectcards/craigslist.png" alt="Craigslist redesign" />
         </div>
@@ -345,8 +346,8 @@
             <span class="tag tg">User Research</span>
             <span class="tag tg">Trust &amp; Safety</span>
           </div>
-          <h3 class="proj-title">Redesigning Craigslist to restore trust and improve usability in a peer marketplace.</h3>
-          <p class="proj-desc">Heuristic evaluation and competitor analysis led to clearer navigation and verified seller trust cues that didn't break what already worked.</p>
+          <h3 class="proj-title">Redesigning trust and safety in peer-to-peer marketplaces</h3>
+          <p class="proj-desc">Improved user confidence by addressing verification gaps and unsafe interaction flows.</p>
           <a href="craigslist.html" class="proj-link">View Case Study ↗</a>
         </div>
       </article>
@@ -361,7 +362,7 @@
         <h2 class="footer-h2">Thanks for stopping by!</h2>
         <p class="footer-sub">Whether you're a recruiter, designer, or collaborator, I'm always open to thoughtful conversations and new opportunities.</p>
         <div style="margin-top:40px">
-          <a style="background:#fff;color:#1c1c1e;" href="mailto:gadgil.devayani@gmail.com" class="btn" style="height:56px;padding:0 32px;font-size:17px">gadgil.devayani@gmail.com <img src="assets/images/emojis/Love%20Letter.svg" alt="" class="emoji-svg" style="width:1em;height:1em;" /></a>
+          <a style="background:#fff;color:#1c1c1e;" href="/cdn-cgi/l/email-protection#95f2f4f1f2fcf9bbf1f0e3f4ecf4fbfcd5f2f8f4fcf9bbf6faf8" class="btn" style="height:56px;padding:0 32px;font-size:17px"><span class="__cf_email__" data-cfemail="e3848287848a8fcd878695829a828d8aa3848e828a8fcd808c8e">[email&#160;protected]</span> <img src="assets/images/emojis/Love%20Letter.svg" alt="" class="emoji-svg" style="width:1em;height:1em;" /></a>
         </div>
       </div>
       <div class="footer-bottom">
@@ -374,7 +375,7 @@
     </div>
   </footer>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     const dot = document.getElementById('cursorDot');
     if (window.matchMedia('(pointer: fine)').matches) {
       document.addEventListener('mousemove', e => { dot.style.left=e.clientX+'px'; dot.style.top=e.clientY+'px'; });
@@ -402,12 +403,3 @@
     });
   </script>
 
-  <script>
-    const siteNav = document.getElementById('siteNav');
-    window.addEventListener('scroll', () => {
-      siteNav.style.borderBottomColor = window.scrollY > 8
-        ? 'rgba(0,0,0,0.08)' : 'rgba(0,0,0,0)';
-    });
-  </script>
-</body>
-</html>
