@@ -49,6 +49,7 @@
             font-style: normal !important;
         }
 
+        .scroll-bar{position:fixed;top:0;left:0;height:2px;width:100%;background:#E6A33E;transform-origin:left;transform:scaleX(0);z-index:9999;transition:transform .1s linear;}
         /* ── NAV STYLING ── */
         .nav{position:fixed;inset:0 0 auto 0;z-index:9000;background:rgba(255,255,255,.52);backdrop-filter:saturate(180%) blur(18px);-webkit-backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid #4a4a4a;}
         .nav-inner{max-width:1360px;margin:0 auto;width:100%;padding:0 clamp(36px,8vw,108px);height:52px;display:flex;align-items:center;gap:32px;box-sizing:border-box;}
@@ -290,6 +291,7 @@
     </style>
 </head>
 <body class="antialiased">
+  <div class="scroll-bar" id="scrollBar"></div>
 
     <nav class="nav" id="siteNav">
       <div class="nav-inner">
@@ -649,18 +651,17 @@
                     Emotional connection as a key UX driver in VR navigation
                 </h2>
             </div>
-            <a href="vr-navigation.html" class="bg-white text-black px-8 py-4 rounded-full font-bold text-sm flex items-center gap-3 hover:scale-105 transition-transform group">
+            <a href="vrusabilitystudy.html" class="bg-white text-black px-8 py-4 rounded-full font-bold text-sm flex items-center gap-3 hover:scale-105 transition-transform group">
                 View Project <span class="text-lg transition-transform group-hover:translate-x-1">→</span>
             </a>
         </div>
     </footer>
 
     <script>
-      const progressBar = document.getElementById('scroll-progress');
+      const bar = document.getElementById('scrollBar');
       window.addEventListener('scroll', () => {
-        const scrolled = window.scrollY;
-        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-        progressBar.style.width = (maxScroll > 0 ? (scrolled / maxScroll) * 100 : 0) + '%';
+        const t = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.transform = `scaleX(${t > 0 ? window.scrollY / t : 0})`;
       }, { passive: true });
 
       /* Hamburger menu */

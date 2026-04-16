@@ -24,7 +24,7 @@
     a, button { cursor: none; }
     
     .cursor-dot { width: 8px; height: 8px; background: rgba(28,28,30,.85); border-radius: 50%; position: fixed; left: -100px; top: -100px; pointer-events: none; z-index: 10000; transform: translate(-50%,-50%); }
-    .scroll-bar { position: fixed; top: 0; left: 0; height: 2px; width: 100%; background: linear-gradient(90deg, #c5b8f5, #f5c5a8, #a8d5c5); transform-origin: left; transform: scaleX(0); z-index: 9999; }
+    .scroll-bar { position: fixed; top: 0; left: 0; height: 2px; width: 100%; background: #a78bfa; transform-origin: left; transform: scaleX(0); z-index: 9999; transition: transform .1s linear; }
     
     .nav{position:fixed;inset:0 0 auto 0;z-index:9000;background:rgba(255,255,255,.52);backdrop-filter:saturate(180%) blur(18px);-webkit-backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid #4a4a4a;}
     .nav-inner{max-width:1360px;margin:0 auto;width:100%;padding:0 clamp(36px,8vw,108px);height:52px;display:flex;align-items:center;gap:32px;box-sizing:border-box;}
@@ -399,10 +399,10 @@
     if (window.matchMedia('(pointer: fine)').matches) {
       document.addEventListener('mousemove', e => { dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px'; });
     } else { dot.style.display = 'none'; }
-    const bar = document.getElementById('scroll-progress');
+    const bar = document.getElementById('scrollBar');
     window.addEventListener('scroll', () => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
-      bar.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+      bar.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`;
     }, { passive: true });
     
     document.querySelectorAll('.fi').forEach(el => setTimeout(() => el.classList.add('visible'), 80));
