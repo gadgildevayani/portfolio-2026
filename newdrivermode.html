@@ -7,7 +7,7 @@
     <title>New Driver Mode · Devayani Gadgil</title>
     <meta name="description" content="New Driver Mode — designing an AI copilot for new drivers that knows when to guide and when to get out of the way." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://devayanigadgil.com/autoux.html" />
+    <meta property="og:url" content="https://devayanigadgil.com/newdrivermode.html" />
     <meta property="og:title" content="New Driver Mode · Devayani Gadgil" />
     <meta property="og:description" content="Designing an AI copilot for new drivers that knows when to guide and when to get out of the way." />
     <meta property="og:image" content="https://devayanigadgil.com/assets/images/thumbnail.png" />
@@ -50,6 +50,10 @@
             font-weight: 400;
             font-style: normal !important;
         }
+
+        /* Consistent body text size — matches hirello's text-lg md:text-xl standard */
+        main p, main li { font-size: 1.125rem; line-height: 1.75; }
+        @media (min-width: 768px) { main p, main li { font-size: 1.25rem; } }
 
         /* Match hirello's Almarai body text color.
            hirello uses 'text-muted' (not a Tailwind class → inherits #1D1D1F from body).
@@ -371,7 +375,7 @@
                 <h1 class="hero-title max-w-4xl">
                     New Driver Mode: An AI copilot that knows when to guide and when to step back
                 </h1>
-                <p class="mt-6 text-lg text-slate-500 font-light max-w-4xl">A speculative systems design exploration into how in-car AI could support new drivers through high-stress moments without adding to the cognitive load that makes driving dangerous.</p>
+                <p class="mt-6 text-lg md:text-xl text-slate-500 font-light max-w-4xl">A speculative systems design exploration into how in-car AI could support new drivers through high-stress moments without adding to the cognitive load that makes driving dangerous.</p>
             </header>
 
             <!-- TL;DR cards -->
@@ -431,14 +435,14 @@
         <section class="space-y-6">
             <h2 class="text-4xl md:text-5xl serif">The problem</h2>
             <div class="space-y-6 max-w-5xl">
-                <p class="text-xl md:text-2xl font-light leading-relaxed">While automotive companies race to embed AI into vehicles for experienced drivers, new drivers remain entirely overlooked. How might we design an in-car intelligent system that <span class="highlight-cyan">knows when to guide and when to get out of the way?</span></p>
+                <p class="text-lg md:text-xl font-light leading-relaxed">While automotive companies race to embed AI into vehicles for experienced drivers, new drivers remain entirely overlooked. How might we design an in-car intelligent system that <span class="highlight-cyan">knows when to guide and when to get out of the way?</span></p>
             </div>
         </section>
 
         <!-- Research -->
         <section class="space-y-10">
             <h2 class="text-4xl md:text-5xl serif">What I learnt from real new drivers</h2>
-            <p class="text-lg font-light text-slate-500 max-w-5xl">I spent time in communities like r/NewDrivers and r/LearnToDrive, reading posts from people actively learning to drive. Three themes emerged consistently.</p>
+            <p class="text-lg md:text-xl font-light text-slate-500 max-w-5xl">I spent time in communities like r/NewDrivers and r/LearnToDrive, reading posts from people actively learning to drive. Three themes emerged consistently.</p>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="p-8 rounded-[2rem] space-y-4 border border-slate-100" style="background-color: var(--card-peach);">
@@ -462,8 +466,8 @@
         <!-- Competitive Analysis -->
         <section class="space-y-8">
             <h2 class="text-4xl md:text-5xl serif">What already exists — and where it falls short</h2>
-            <p class="text-lg font-light text-slate-500 max-w-5xl">Before designing, I looked at what already exists for new drivers.</p>
-            <div class="space-y-4 text-lg font-light text-slate-600 max-w-5xl">
+            <p class="text-lg md:text-xl font-light text-slate-500 max-w-5xl">Before designing, I looked at what already exists for new drivers.</p>
+            <div class="space-y-4 text-lg md:text-xl font-light text-slate-600 max-w-5xl">
                 <p><span class="font-medium text-black">Ford MyKey</span> restricts speed, limits audio volume, and prevents certain safety features from being disabled. It gives parents control but offers the driver no guidance or support.</p>
                 <p><span class="font-medium text-black">Mercedes MBUX Beginner Mode</span> caps acceleration and speed. More sophisticated than MyKey but still fundamentally the same approach: restriction, not support.</p>
                 <p>Both systems assume the problem is behavior. Neither addresses the anxiety driving that behavior in the first place.</p>
@@ -502,7 +506,7 @@
         <!-- Design Principles -->
         <section class="space-y-8">
             <h2 class="text-4xl md:text-5xl serif">Design principles</h2>
-            <p class="text-lg font-light text-slate-500 max-w-5xl">These four principles guided every design decision in the project.</p>
+            <p class="text-lg md:text-xl font-light text-slate-500 max-w-5xl">These four principles guided every design decision in the project.</p>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div class="principle-card" style="background-color: var(--card-slate);">
@@ -527,9 +531,9 @@
         <!-- System Map -->
         <section class="space-y-8">
             <h2 class="text-4xl md:text-5xl serif">System map</h2>
-            <p class="text-lg font-light text-slate-500 max-w-5xl">Before opening Figma, I mapped the complete system logic. The goal was to understand how the AI would behave across every scenario before designing a single screen.</p>
+            <p class="text-lg md:text-xl font-light text-slate-500 max-w-5xl">Before opening Figma, I mapped the complete system logic. The goal was to understand how the AI would behave across every scenario before designing a single screen.</p>
 
-            <div class="space-y-4 text-lg font-light text-slate-600 max-w-5xl">
+            <div class="space-y-4 text-lg md:text-xl font-light text-slate-600 max-w-5xl">
                 <p><span class="font-medium text-black">Entry</span> — The driver selects their profile at ignition. New Driver Mode loads automatically with their saved confidence history.</p>
                 <p><span class="font-medium text-black">Monitoring</span> — The system runs silently in the background at all times. It never interrupts unless a trigger condition is met.</p>
                 <p><span class="font-medium text-black">Guidance</span> — Three trigger paths activate contextual guidance: highway merge, parallel parking, and silence when no intervention is needed.</p>
@@ -543,7 +547,7 @@
         <!-- Screen Walkthroughs -->
         <section class="space-y-10">
             <h2 class="text-4xl md:text-5xl serif">The design</h2>
-            <p class="text-lg font-light text-slate-500 max-w-5xl">Current ADAS systems speak in alerts: beeps, flashes, warnings. <span class="highlight-cyan">This system speaks in guidance: calm, contextual, human. It translates what the car knows into what the driver needs to hear, at exactly the right moment.</span></p>
+            <p class="text-lg md:text-xl font-light text-slate-500 max-w-5xl">Current ADAS systems speak in alerts: beeps, flashes, warnings. <span class="highlight-cyan">This system speaks in guidance: calm, contextual, human. It translates what the car knows into what the driver needs to hear, at exactly the right moment.</span></p>
         </section>
 
         <!-- Profile Selection -->
@@ -553,7 +557,7 @@
                 <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase hidden sm:inline">Screen 01</span>
             </div>
             <img src="assets/images/autoux/profile-selection.png" alt="Profile selection screen showing three driver profiles with New Driver Mode badge on Reva's card" loading="lazy" decoding="async" style="width:100%;height:auto;display:block;border-radius:20px;" />
-            <div class="space-y-4 text-lg font-light text-slate-600 max-w-5xl">
+            <div class="space-y-4 text-lg md:text-xl font-light text-slate-600 max-w-5xl">
                 <p>When the driver gets in the car, the first thing they see is a familiar profile selection screen. Reva's profile carries a small New Driver Mode badge. The only visual difference from other profiles. No warnings, no restrictions messaging, no stigma.</p>
                 <p>The mode activates silently the moment she selects her profile. <span class="highlight-blue">New Driver Mode should feel like support, not surveillance.</span></p>
             </div>
@@ -566,7 +570,7 @@
                 <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase hidden sm:inline">Screen 02 — 04</span>
             </div>
 
-            <p class="text-lg font-light text-slate-600 max-w-5xl">The sequence is built around one research insight: new drivers don't freeze because they lack knowledge. They freeze because anxiety overrides what they know.</p>
+            <p class="text-lg md:text-xl font-light text-slate-600 max-w-5xl">The sequence is built around one research insight: new drivers don't freeze because they lack knowledge. They freeze because anxiety overrides what they know.</p>
 
             <div class="hud-grid">
                 <div class="hud-card">
@@ -636,7 +640,7 @@
                 <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase hidden sm:inline">Screen 05</span>
             </div>
             <img src="assets/images/autoux/parallel-parking.png" alt="Parallel parking screen showing infotainment camera overlay with step by step guidance" loading="lazy" decoding="async" style="width:100%;height:auto;display:block;border-radius:20px;" />
-            <div class="space-y-4 text-lg font-light text-slate-600 max-w-5xl">
+            <div class="space-y-4 text-lg md:text-xl font-light text-slate-600 max-w-5xl">
                 <p>Guidance activates automatically when the system detects parking intent through a combination of low speed, turn signal, location context and reverse gear. No additional interaction needed.</p>
                 <p>Step by step instructions and distance indicators appear on the camera feed. A haptic pulse on the steering wheel confirms when the wheel reaches the optimal turning angle, building physical muscle memory without requiring the driver to look away from the camera.</p>
                 <p class="font-medium text-black">Text treatment differs intentionally from the HUD. Infotainment guidance uses a contained text element for maximum readability from the driver's seated position.</p>
@@ -650,7 +654,7 @@
                 <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase hidden sm:inline">Screen 06</span>
             </div>
             <img src="assets/images/autoux/drive-summary.png" alt="Drive summary dashboard showing assist events trend graph and drive insight" loading="lazy" decoding="async" style="width:100%;height:auto;display:block;border-radius:20px;" />
-            <div class="space-y-4 text-lg font-light text-slate-600 max-w-5xl">
+            <div class="space-y-4 text-lg md:text-xl font-light text-slate-600 max-w-5xl">
                 <p>Not a score. Just honest data. Assist events across the last ten drives shown as a simple trend graph. A line that, over time, should trend downward.</p>
                 <p>One quiet amber observation at the bottom: "You needed less guidance this week than last." No celebration. The driver draws their own conclusion.</p>
             </div>
@@ -659,7 +663,7 @@
         <!-- Technical Feasibility -->
         <section class="space-y-6">
             <h2 class="text-4xl md:text-5xl serif">Technical feasibility</h2>
-            <div class="space-y-4 text-lg font-light text-slate-600 max-w-5xl">
+            <div class="space-y-4 text-lg md:text-xl font-light text-slate-600 max-w-5xl">
                 <p>A natural question when designing driver guidance: how does the car actually know when to guide?</p>
                 <p>The answer lies in sensors already present in most modern ADAS-equipped vehicles. Blind spot monitoring detects adjacent lane traffic. Radar measures gap distances and speed differentials. GPS knows ramp geometry and parking zones. Steering input sensors detect wheel position and turning angle. Reverse gear activation triggers the parking camera.</p>
                 <p><span class="font-medium text-black">This project doesn't propose new hardware.</span> It proposes a UX layer that synthesizes existing sensor data into calm, timely, human-readable guidance for a new driver.</p>
@@ -670,7 +674,7 @@
         <!-- System Considerations -->
         <section class="space-y-8">
             <h2 class="text-4xl md:text-5xl serif">System considerations</h2>
-            <p class="text-lg font-light text-slate-500 max-w-5xl">Thinking beyond the happy path shaped several important system decisions.</p>
+            <p class="text-lg md:text-xl font-light text-slate-500 max-w-5xl">Thinking beyond the happy path shaped several important system decisions.</p>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
@@ -700,7 +704,7 @@
         <!-- Automation Bias -->
         <section class="space-y-6">
             <h2 class="text-4xl md:text-5xl serif">Designing against reliance</h2>
-            <div class="space-y-4 text-lg font-light text-slate-600 max-w-5xl">
+            <div class="space-y-4 text-lg md:text-xl font-light text-slate-600 max-w-5xl">
                 <p><span class="highlight-blue">One concern that came up early in the design process was automation bias,</span> the tendency for humans to over-rely on automated systems and lose the ability to perform without them. Aviation has struggled with this for decades. It's why pilots still do manual landings regularly, to maintain proficiency.</p>
                 <p>New Driver Mode could easily fall into the same trap. The design addresses this in three ways. Guidance activates only in high-anxiety moments, not as a constant presence. It steps back progressively as the driver completes scenarios independently. And the Drive Summary shows assist events trending downward over time, making the reduction in guidance visible and meaningful.</p>
                 <p><span class="font-medium text-black">The goal was never to make drivers dependent on the system. It was to build the muscle memory and judgment that makes the system unnecessary.</span></p>
