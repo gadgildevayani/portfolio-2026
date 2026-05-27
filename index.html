@@ -273,9 +273,13 @@
       /* Sticky stacking */
       position:sticky;top:0;
     }
-    .proj--hirello   {background:#F6EFEA;z-index:1}
-    .proj--umbc      {background:#F4F1F8;z-index:2}
-    .proj--vr        {background:#F0F9F5;z-index:3}
+    .proj--autoux    {background:#E8F0F7;z-index:1}
+    .proj--autoux .proj-inner{grid-template-columns:minmax(0,1fr) minmax(0,1fr);will-change:auto}
+    .proj--autoux .proj-title{max-width:40rem}
+    .proj--autoux .proj-img{image-rendering:-webkit-optimize-contrast;will-change:auto}
+    .proj--hirello   {background:#F6EFEA;z-index:2}
+    .proj--umbc      {background:#F4F1F8;z-index:3}
+    .proj--vr        {background:#F0F9F5;z-index:4}
 
     .proj-inner{
       max-width:1360px;margin:0 auto;width:100%;box-sizing:border-box;
@@ -299,6 +303,7 @@
       font-family:var(--font);font-size:clamp(12.5px,0.95vw,13.5px);font-weight:400;
       padding:6px 14px;border-radius:999px;white-space:nowrap;
     }
+    .proj--autoux  .proj-tag,
     .proj--hirello .proj-tag,
     .proj--umbc    .proj-tag,
     .proj--vr      .proj-tag{background:transparent;color:#111;border:1px solid rgba(28,28,30,.35)}
@@ -349,6 +354,7 @@
       border-radius:0;
       box-shadow:none;
     }
+    .proj--autoux  .proj-img,
     .proj--hirello .proj-img{
       border-radius:20px;
       box-shadow:0 20px 56px rgba(28,28,30,.10),0 4px 16px rgba(28,28,30,.06);
@@ -670,11 +676,31 @@
 
   <section id="work" class="work-section">
 
-    <!-- 01 Hirello -->
-    <div class="proj proj--hirello">
+    <!-- 01 Automotive UX -->
+    <div class="proj proj--autoux">
       <div class="proj-inner">
         <div class="proj-copy reveal">
           <span class="proj-num">01</span>
+          <div class="proj-tags">
+            <span class="proj-tag">Automotive UX</span>
+            <span class="proj-tag">HMI</span>
+            <span class="proj-tag">Systems Design</span>
+          </div>
+          <h3 class="proj-title">New Driver Mode: An AI copilot that knows when to guide and when to get out of the way</h3>
+          <p class="proj-desc">A speculative systems design exploration into how in-car AI could support new drivers through high-stress moments without adding to the cognitive load that makes driving dangerous.</p>
+          <a href="autoux.html" class="proj-cta">View case study <span class="cta-arrow">→</span></a>
+        </div>
+        <div class="proj-visual reveal d1">
+          <img class="proj-img" src="assets/images/projectcards/autoux-panel.png" alt="Automotive UX HMI Systems Design" />
+        </div>
+      </div>
+    </div>
+
+    <!-- 02 Hirello -->
+    <div class="proj proj--hirello">
+      <div class="proj-inner">
+        <div class="proj-copy reveal">
+          <span class="proj-num">02</span>
           <div class="proj-tags">
             <span class="proj-tag">Product Design</span>
             <span class="proj-tag">UX Strategy</span>

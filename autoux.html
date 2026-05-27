@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="assets/images/devayani-circle.png" />
+    <title>New Driver Mode · Devayani Gadgil</title>
+    <meta name="description" content="New Driver Mode — designing an AI copilot for new drivers that knows when to guide and when to get out of the way." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://devayanigadgil.com/autoux.html" />
+    <meta property="og:title" content="New Driver Mode · Devayani Gadgil" />
+    <meta property="og:description" content="Designing an AI copilot for new drivers that knows when to guide and when to get out of the way." />
+    <meta property="og:image" content="https://devayanigadgil.com/assets/images/thumbnail.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #FFFFFF;
+            --secondary-bg: #F8FAFC;
+            --accent-blue: #DBEAFE;
+            --accent-orange: #FFEDD5;
+            --text-main: #1D1D1F;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --h-blue: #0891B2;
+            --wrap-width: 1080px;
+
+            --card-sky: #F0F7FF;
+            --card-lavender: #F5F3FF;
+            --card-mint: #F0FDF4;
+            --card-peach: #FFF7F5;
+            --card-slate: #F8FAFC;
+            --card-ice: #EBF3FA;
+        }
+
+        body {
+            font-family: 'Almarai', sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        h1, h2, h3, h4, .serif {
+            font-family: 'Instrument Serif', serif;
+            font-weight: 400;
+            font-style: normal !important;
+        }
+
+        /* Match hirello's Almarai body text color.
+           hirello uses 'text-muted' (not a Tailwind class → inherits #1D1D1F from body).
+           autoux uses text-slate-600/500 (Tailwind → #475569 / #64748b).
+           These overrides bring autoux in line. main .class beats Tailwind's .class alone. */
+        main .text-slate-600,
+        main .text-slate-600 p,
+        section .text-slate-600 { color: var(--text-main); }
+
+        main .text-slate-500,
+        main .text-slate-500 p,
+        section .text-slate-500 { color: var(--text-muted); }
+
+        .text-muted { color: var(--text-muted); }
+
+        /* NAV */
+        .scroll-bar{position:fixed;top:0;left:0;height:2px;width:100%;background:#22D3EE;transform-origin:left;transform:scaleX(0);z-index:9999;transition:transform .1s linear;}
+        .nav{position:fixed;inset:0 0 auto 0;z-index:9000;background:rgba(255,255,255,.52);backdrop-filter:saturate(180%) blur(18px);-webkit-backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid #4a4a4a;}
+        .nav-inner{max-width:1360px;margin:0 auto;width:100%;padding:0 clamp(36px,8vw,108px);height:52px;display:flex;align-items:center;gap:32px;box-sizing:border-box;}
+        .nav-inner a{text-decoration:none;color:#4a4a4a;font-family:inherit;font-size:15px;opacity:1;position:relative;transition:opacity .25s cubic-bezier(.16,1,.3,1);}
+        .nav-inner a::after{content:"";position:absolute;left:0;bottom:-2px;height:1.5px;width:100%;background:#4a4a4a;transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.22,1,.36,1);}
+        .nav-inner a:hover{opacity:1;}
+        .nav-inner a:hover::after{transform:scaleX(1);}
+        .nav-hamburger{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:44px;height:44px;background:none;border:none;padding:0;cursor:pointer;margin-left:auto;flex-shrink:0;}
+        .nav-hamburger span{display:block;width:22px;height:1.5px;background:#4a4a4a;transition:transform .3s cubic-bezier(.16,1,.3,1),opacity .2s ease;transform-origin:center;}
+        .nav-hamburger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+        .nav-hamburger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+        .nav-hamburger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+        .nav-drawer{display:none;position:fixed;inset:52px 0 0 0;z-index:8999;background:rgba(255,255,255,.97);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);flex-direction:column;align-items:flex-start;justify-content:center;padding:0 24px 48px;gap:8px;opacity:0;pointer-events:none;transition:opacity .3s cubic-bezier(.16,1,.3,1);}
+        .nav-drawer.open{opacity:1;pointer-events:auto;}
+        .nav-drawer a{font-size:clamp(1.5rem,7vw,2rem);font-weight:400;letter-spacing:-.02em;color:#111;text-decoration:none;padding:10px 0;border-bottom:1px solid rgba(28,28,30,.08);width:100%;transition:opacity .2s ease;}
+        .nav-drawer a:last-child{border-bottom:none;}
+        .nav-drawer a:hover{opacity:.55;}
+        @media(max-width:700px){
+          .nav-inner{padding:0 20px;}
+          .nav-inner > a{display:none;}
+          .nav-hamburger{display:flex;}
+          .nav-drawer{display:flex;}
+        }
+
+        /* TOKENS */
+        .tag-pill {
+            display: inline-block;
+            padding: 6px 18px;
+            border: 1px solid var(--border-color);
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-right: 8px;
+            margin-bottom: 12px;
+            background: white;
+        }
+
+        /* Metric styling — matches hirello.html */
+        .metric-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            padding: 2rem 0;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+        .metric-item .num {
+            font-family: 'Instrument Serif', serif;
+            font-size: 4rem;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .metric-item .label {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+        @media (max-width: 640px) {
+            .metric-row { grid-template-columns: 1fr; gap: 1.5rem; border: none; padding: 0; }
+            .metric-item { padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); }
+            .metric-item .num { font-size: 3rem; }
+        }
+
+        .highlight-blue {
+            background-color: var(--accent-blue);
+            padding: 2px 6px;
+            border-radius: 2px;
+            display: inline;
+            box-decoration-break: clone;
+            -webkit-box-decoration-break: clone;
+        }
+
+        .highlight-cyan {
+            background-color: #E0F7FA;
+            padding: 2px 6px;
+            border-radius: 2px;
+            display: inline;
+            box-decoration-break: clone;
+            -webkit-box-decoration-break: clone;
+        }
+
+        .wrap-content {
+            max-width: var(--wrap-width);
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 8vw, 4.8rem);
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            margin-bottom: 0;
+        }
+
+        .tldr-card {
+            border: 1px solid var(--border-color);
+            padding: 2.25rem 1.75rem;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            min-height: 200px;
+        }
+
+        @media (min-width: 1024px) {
+            .tldr-card { min-height: 240px; }
+        }
+
+        .tldr-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px -10px rgba(0,0,0,0.08);
+        }
+
+        .tldr-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 1rem;
+        }
+
+        @media (max-width: 1023px) {
+            .tldr-grid { grid-template-columns: repeat(2, 1fr); }
+            .tldr-card { padding: 1.5rem; min-height: 180px; }
+        }
+        @media (max-width: 640px) {
+            .tldr-grid { grid-template-columns: 1fr; }
+            .tldr-card { min-height: auto; }
+        }
+
+        .point-tag {
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .bullet-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .img-container {
+            background: #F1F5F9;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            line-height: 0;
+        }
+
+        .img-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 24px;
+        }
+
+        /* HUD sequence */
+        .hud-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .hud-card {
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background: #0D1117;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+        }
+
+        .hud-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 20px 0 0 20px;
+        }
+
+        .hud-label {
+            padding: 1.5rem 2rem;
+            background: #0D1117;
+            min-width: 260px;
+            max-width: 320px;
+        }
+
+        @media (max-width: 768px) {
+            .hud-card { grid-template-columns: 1fr; }
+            .hud-card img { border-radius: 20px 20px 0 0; }
+            .hud-label { min-width: unset; max-width: unset; }
+        }
+
+        /* Quote blocks */
+        .quote-block {
+            padding: 2rem 2.5rem;
+            background: var(--card-slate);
+            border-radius: 20px;
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+            line-height: 1.5;
+            border-left: 3px solid #e2e8f0;
+        }
+
+        /* Principle cards */
+        .principle-card {
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .principle-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px -8px rgba(0,0,0,0.08);
+        }
+
+        /* System map container */
+        .system-map-container {
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background: white;
+            padding: 2rem;
+        }
+
+        /* Competitive table */
+        .comp-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+        }
+        .comp-table th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .comp-table td {
+            padding: 16px 16px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 15px;
+            font-weight: 300;
+            vertical-align: top;
+        }
+        .comp-table tr:last-child td {
+            border-bottom: none;
+            background: var(--card-ice);
+            font-weight: 500;
+        }
+        .comp-table tr:last-child td:first-child {
+            border-radius: 0 0 0 16px;
+        }
+        .comp-table tr:last-child td:last-child {
+            border-radius: 0 0 16px 0;
+        }
+    </style>
+</head>
+<body class="antialiased">
+  <div class="scroll-bar" id="scrollBar"></div>
+
+    <nav class="nav" id="siteNav">
+      <div class="nav-inner">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="index.html#work">Work</a>
+        <a href="https://www.linkedin.com/in/devayanigadgil/" target="_blank" rel="noreferrer">LinkedIn</a>
+        <a href="https://drive.google.com/file/d/1Ul2Rtwq6gQFSDQ3qBxCE9wkOMALZCbco/view?usp=sharing" target="_blank" rel="noreferrer">Resume</a>
+        <button class="nav-hamburger" id="navHamburger" aria-label="Open menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+    <div class="nav-drawer" id="navDrawer" aria-hidden="true">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="index.html#work">Work</a>
+      <a href="https://www.linkedin.com/in/devayanigadgil/" target="_blank" rel="noreferrer">LinkedIn</a>
+      <a href="https://drive.google.com/file/d/1Ul2Rtwq6gQFSDQ3qBxCE9wkOMALZCbco/view?usp=sharing" target="_blank" rel="noreferrer">Resume</a>
+    </div>
+
+    <!-- Hero & TL;DR -->
+    <section class="flex flex-col justify-center pt-24 pb-16 md:pt-32 lg:pt-40 md:pb-24">
+        <div class="wrap-content">
+            <header class="text-left mb-8 md:mb-12">
+                <div class="mb-4 md:mb-6">
+                    <span class="tag-pill">Automotive UX</span>
+                    <span class="tag-pill">HMI</span>
+                    <span class="tag-pill">Systems Design</span>
+                </div>
+                <h1 class="hero-title max-w-4xl">
+                    New Driver Mode: An AI copilot that knows when to guide and when to step back
+                </h1>
+                <p class="mt-6 text-lg text-slate-500 font-light max-w-4xl">A speculative systems design exploration into how in-car AI could support new drivers through high-stress moments without adding to the cognitive load that makes driving dangerous.</p>
+            </header>
+
+            <!-- TL;DR cards -->
+            <div class="tldr-grid">
+                <div class="tldr-card col-span-1 md:col-span-2 border-none" style="background-color: var(--card-slate);">
+                    <h2 class="text-3xl serif mb-3">TL;DR</h2>
+                    <p class="text-lg md:text-xl font-medium">A speculative HMI concept exploring how AI guidance could reduce new driver anxiety in real-time, high-stakes moments.</p>
+                </div>
+
+                <div class="tldr-card col-span-1 md:col-span-2 border-none" style="background-color: var(--card-peach);">
+                    <span class="point-tag">The Gap</span>
+                    <p class="text-lg md:text-xl font-medium">Every automotive AI system is built for experienced drivers. New drivers are completely overlooked.</p>
+                </div>
+
+                <div class="tldr-card col-span-1 md:col-span-2 border-none" style="background-color: var(--card-lavender);">
+                    <span class="point-tag">The Insight</span>
+                    <p class="text-lg md:text-xl font-medium">New drivers don't struggle because they lack knowledge. Anxiety overrides what they know.</p>
+                </div>
+
+                <div class="tldr-card col-span-1 md:col-span-2 border-slate-900 border-2 shadow-sm" style="background-color: var(--card-mint);">
+                    <span class="point-tag">The Approach</span>
+                    <p class="text-lg md:text-xl font-medium">A multimodal guidance system using HUD for highway, infotainment for parking, and haptic feedback for spatial muscle memory. It speaks only when it needs to.</p>
+                </div>
+
+                <div class="tldr-card col-span-1 md:col-span-2 border-none" style="background-color: var(--card-ice);">
+                    <span class="point-tag">The Design</span>
+                    <p class="text-lg md:text-xl font-medium">Three HUD states, one deliberate silence, a parking overlay, and a post-drive dashboard that shows progress without scoring it.</p>
+                </div>
+
+                <div class="tldr-card col-span-1 md:col-span-2 border-none" style="background-color: var(--card-sky); min-height: auto;">
+                    <span class="point-tag">The Principle</span>
+                    <p class="text-lg md:text-xl font-medium">The system succeeds when the driver no longer needs it.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="wrap-content pb-24 space-y-16 md:space-y-20">
+
+        <!-- Opening Hook -->
+        <section class="space-y-6 pt-4">
+            <h2 class="text-4xl md:text-5xl serif">Where this started</h2>
+            <div class="space-y-6 max-w-5xl">
+                <div class="quote-block">
+                    "I literally sweat so much and my heart rate skyrockets whenever it's time to merge."
+                </div>
+                <div class="space-y-4 text-lg md:text-xl font-light leading-relaxed text-slate-600">
+                    <p>That's not an edge case. Scroll through r/NewDrivers and you find the same story told a thousand different ways. Death grip on the wheel. Heart rate spiking before a highway merge. Slowing down on the ramp because panic overrides everything they learned in driving school.</p>
+                    <p>New drivers don't struggle because they lack knowledge. They struggle because <span class="highlight-cyan">anxiety overrides what they know.</span></p>
+                    <p>And every automotive AI system today is designed for drivers who've already conquered that fear.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Problem Statement -->
+        <section class="space-y-6">
+            <h2 class="text-4xl md:text-5xl serif">The problem</h2>
+            <div class="space-y-6 max-w-5xl">
+                <p class="text-xl md:text-2xl font-light leading-relaxed">While automotive companies race to embed AI into vehicles for experienced drivers, new drivers remain entirely overlooked. How might we design an in-car intelligent system that <span class="highlight-cyan">knows when to guide and when to get out of the way?</span></p>
+            </div>
+        </section>
+
+        <!-- Research -->
+        <section class="space-y-10">
+            <h2 class="text-4xl md:text-5xl serif">What I learnt from real new drivers</h2>
+            <p class="text-lg font-light text-slate-500 max-w-5xl">I spent time in communities like r/NewDrivers and r/LearnToDrive, reading posts from people actively learning to drive. Three themes emerged consistently.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="p-8 rounded-[2rem] space-y-4 border border-slate-100" style="background-color: var(--card-peach);">
+                    <h4 class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Theme 01</h4>
+                    <p class="text-xl font-bold leading-tight">Anxiety overrides knowledge</p>
+                    <p class="text-base font-light text-slate-600 leading-relaxed">"It felt like I forgot everything I learned in the theoretical driving course because I felt so overwhelmed with all the new stimuli."</p>
+                </div>
+                <div class="p-8 rounded-[2rem] space-y-4 border border-slate-100" style="background-color: var(--card-sky);">
+                    <h4 class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Theme 02</h4>
+                    <p class="text-xl font-bold leading-tight">Highway merging is the peak anxiety moment</p>
+                    <p class="text-base font-light text-slate-600 leading-relaxed">"I end up slowing down to a speed I shouldn't, in my panic, and always have to squeeze in by flooring it when there's finally an opening."</p>
+                </div>
+                <div class="p-8 rounded-[2rem] space-y-4 border border-slate-100" style="background-color: var(--card-mint);">
+                    <h4 class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Theme 03</h4>
+                    <p class="text-xl font-bold leading-tight">The gap between knowing and doing</p>
+                    <p class="text-base font-light text-slate-600 leading-relaxed">"I know how to parallel park, but I've never parallel parked between 2 cars before and I feel quite anxious about attempting it."</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Competitive Analysis -->
+        <section class="space-y-8">
+            <h2 class="text-4xl md:text-5xl serif">What already exists — and where it falls short</h2>
+            <p class="text-lg font-light text-slate-500 max-w-5xl">Before designing, I looked at what already exists for new drivers.</p>
+            <div class="space-y-4 text-lg font-light text-slate-600 max-w-5xl">
+                <p><span class="font-medium text-black">Ford MyKey</span> restricts speed, limits audio volume, and prevents certain safety features from being disabled. It gives parents control but offers the driver no guidance or support.</p>
+                <p><span class="font-medium text-black">Mercedes MBUX Beginner Mode</span> caps acceleration and speed. More sophisticated than MyKey but still fundamentally the same approach: restriction, not support.</p>
+                <p>Both systems assume the problem is behavior. Neither addresses the anxiety driving that behavior in the first place.</p>
+            </div>
+
+            <div class="rounded-[20px] overflow-hidden border border-slate-200">
+                <table class="comp-table">
+                    <thead>
+                        <tr>
+                            <th>System</th>
+                            <th>Approach</th>
+                            <th>What it misses</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="font-medium">Ford MyKey</td>
+                            <td>Speed and audio restrictions</td>
+                            <td>No contextual guidance</td>
+                        </tr>
+                        <tr>
+                            <td class="font-medium">Mercedes MBUX</td>
+                            <td>Acceleration and speed limits</td>
+                            <td>No anxiety awareness</td>
+                        </tr>
+                        <tr>
+                            <td class="font-medium">New Driver Mode</td>
+                            <td>Adaptive HUD guidance</td>
+                            <td>Addresses fear, builds confidence</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Design Principles -->
+        <section class="space-y-8">
+            <h2 class="text-4xl md:text-5xl serif">Design principles</h2>
+            <p class="text-lg font-light text-slate-500 max-w-5xl">These four principles guided every design decision in the project.</p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div class="principle-card" style="background-color: var(--card-slate);">
+                    <h4 class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-3">Principle 01</h4>
+                    <p class="text-lg font-medium">Activate only in high-stress moments, not constantly</p>
+                </div>
+                <div class="principle-card" style="background-color: var(--card-peach);">
+                    <h4 class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-3">Principle 02</h4>
+                    <p class="text-lg font-medium">Account for fear, not just lack of knowledge</p>
+                </div>
+                <div class="principle-card" style="background-color: var(--card-sky);">
+                    <h4 class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-3">Principle 03</h4>
+                    <p class="text-lg font-medium">Guidance surfaces automatically based on context</p>
+                </div>
+                <div class="principle-card" style="background-color: var(--card-mint);">
+                    <h4 class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-3">Principle 04</h4>
+                    <p class="text-lg font-medium">Step back as the driver builds confidence over time</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- System Map -->
+        <section class="space-y-8">
+            <h2 class="text-4xl md:text-5xl serif">System map</h2>
+            <p class="text-lg font-light text-slate-500 max-w-5xl">Before opening Figma, I mapped the complete system logic. The goal was to understand how the AI would behave across every scenario before designing a single screen.</p>
+
+            <div class="space-y-4 text-lg font-light text-slate-600 max-w-5xl">
+                <p><span class="font-medium text-black">Entry</span> — The driver selects their profile at ignition. New Driver Mode loads automatically with their saved confidence history.</p>
+                <p><span class="font-medium text-black">Monitoring</span> — The system runs silently in the background at all times. It never interrupts unless a trigger condition is met.</p>
+                <p><span class="font-medium text-black">Guidance</span> — Three trigger paths activate contextual guidance: highway merge, parallel parking, and silence when no intervention is needed.</p>
+            </div>
+
+            <div class="system-map-container">
+                <img src="assets/images/autoux/system-map.svg" alt="New Driver Mode system map showing entry, monitoring layer, trigger logic and post-drive flow" width="100%" />
+            </div>
+        </section>
+
+        <!-- Screen Walkthroughs -->
+        <section class="space-y-10">
+            <h2 class="text-4xl md:text-5xl serif">The design</h2>
+            <p class="text-lg font-light text-slate-500 max-w-5xl">Current ADAS systems speak in alerts: beeps, flashes, warnings. <span class="highlight-cyan">This system speaks in guidance: calm, contextual, human. It translates what the car knows into what the driver needs to hear, at exactly the right moment.</span></p>
+        </section>
+
+        <!-- Profile Selection -->
+        <section class="space-y-6">
+            <div class="flex justify-between items-baseline border-b border-slate-100 pb-3">
+                <h3 class="text-2xl md:text-3xl font-bold">Profile selection</h3>
+                <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase hidden sm:inline">Screen 01</span>
+            </div>
+            <img src="assets/images/autoux/profile-selection.png" alt="Profile selection screen showing three driver profiles with New Driver Mode badge on Reva's card" loading="lazy" decoding="async" style="width:100%;height:auto;display:block;border-radius:20px;" />
+            <div class="space-y-4 text-lg font-light text-slate-600 max-w-5xl">
+                <p>When the driver gets in the car, the first thing they see is a familiar profile selection screen. Reva's profile carries a small New Driver Mode badge. The only visual difference from other profiles. No warnings, no restrictions messaging, no stigma.</p>
+                <p>The mode activates silently the moment she selects her profile. <span class="highlight-blue">New Driver Mode should feel like support, not surveillance.</span></p>
+            </div>
+        </section>
+
+        <!-- Highway Merge -->
+        <section class="space-y-8">
+            <div class="flex justify-between items-baseline border-b border-slate-100 pb-3">
+                <h3 class="text-2xl md:text-3xl font-bold">Highway merge — three states</h3>
+                <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase hidden sm:inline">Screen 02 — 04</span>
+            </div>
+
+            <p class="text-lg font-light text-slate-600 max-w-5xl">The sequence is built around one research insight: new drivers don't freeze because they lack knowledge. They freeze because anxiety overrides what they know.</p>
+
+            <div class="hud-grid">
+                <div class="hud-card">
+                    <img src="assets/images/autoux/HM1.png" alt="HUD Screen 1 showing increase speed and signal left guidance on highway ramp" loading="lazy" decoding="async" />
+                    <div class="hud-label">
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">State 01 — System speaks</p>
+                        <p class="text-sm text-slate-300 font-light">Build speed. Signal left. System is present and guiding.</p>
+                    </div>
+                </div>
+                <div class="hud-card">
+                    <img src="assets/images/autoux/HM2.png" alt="HUD Screen 2 showing only a curved path arrow with no text — deliberate silence" loading="lazy" decoding="async" />
+                    <div class="hud-label">
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">State 02 — Silence</p>
+                        <p class="text-sm text-slate-300 font-light">Driver has signaled. System goes quiet. Just a path. The absence of instruction is itself a signal: you're doing it right.</p>
+                    </div>
+                </div>
+                <div class="hud-card">
+                    <img src="assets/images/autoux/HM3.png" alt="HUD Screen 3 showing gap detection with green highlight and check mirror guidance" loading="lazy" decoding="async" />
+                    <div class="hud-label">
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">State 03 — System speaks again</p>
+                        <p class="text-sm text-slate-300 font-light">Gap opens. Green highlight marks the zone. "Check mirror — merge when ready." The driver makes the final decision.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rounded-[20px] border border-slate-100 overflow-hidden" style="background-color: var(--card-slate);">
+                <div class="px-8 py-5 border-b border-slate-100">
+                    <h4 class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Color language</h4>
+                </div>
+                <div class="divide-y divide-slate-100">
+                    <div class="px-8 py-5 flex items-center gap-5">
+                        <div class="w-8 h-8 rounded-lg flex-shrink-0" style="background:#67E8F9;"></div>
+                        <div>
+                            <p class="text-sm font-medium text-black">Cyan</p>
+                            <p class="text-sm font-light text-slate-500">Lane lines — system is monitoring, aware of driver position</p>
+                        </div>
+                    </div>
+                    <div class="px-8 py-5 flex items-center gap-5">
+                        <div class="w-8 h-8 rounded-lg flex-shrink-0 border border-slate-200" style="background:#FFFFFF;"></div>
+                        <div>
+                            <p class="text-sm font-medium text-black">White</p>
+                            <p class="text-sm font-light text-slate-500">Guidance text — calm, readable in any lighting condition</p>
+                        </div>
+                    </div>
+                    <div class="px-8 py-5 flex items-center gap-5">
+                        <div class="w-8 h-8 rounded-lg flex-shrink-0" style="background:#4ADE80;"></div>
+                        <div>
+                            <p class="text-sm font-medium text-black">Green</p>
+                            <p class="text-sm font-light text-slate-500">Gap detected — action available, go signal</p>
+                        </div>
+                    </div>
+                    <div class="px-8 py-5 flex items-center gap-5">
+                        <div class="w-8 h-8 rounded-lg flex-shrink-0" style="background:#FCD34D;"></div>
+                        <div>
+                            <p class="text-sm font-medium text-black">Amber</p>
+                            <p class="text-sm font-light text-slate-500">Progress and encouragement — used only on post-drive dashboard</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Parallel Parking -->
+        <section class="space-y-6">
+            <div class="flex justify-between items-baseline border-b border-slate-100 pb-3">
+                <h3 class="text-2xl md:text-3xl font-bold">Parallel parking</h3>
+                <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase hidden sm:inline">Screen 05</span>
+            </div>
+            <img src="assets/images/autoux/parallel-parking.png" alt="Parallel parking screen showing infotainment camera overlay with step by step guidance" loading="lazy" decoding="async" style="width:100%;height:auto;display:block;border-radius:20px;" />
+            <div class="space-y-4 text-lg font-light text-slate-600 max-w-5xl">
+                <p>Guidance activates automatically when the system detects parking intent through a combination of low speed, turn signal, location context and reverse gear. No additional interaction needed.</p>
+                <p>Step by step instructions and distance indicators appear on the camera feed. A haptic pulse on the steering wheel confirms when the wheel reaches the optimal turning angle, building physical muscle memory without requiring the driver to look away from the camera.</p>
+                <p class="font-medium text-black">Text treatment differs intentionally from the HUD. Infotainment guidance uses a contained text element for maximum readability from the driver's seated position.</p>
+            </div>
+        </section>
+
+        <!-- Drive Summary -->
+        <section class="space-y-6">
+            <div class="flex justify-between items-baseline border-b border-slate-100 pb-3">
+                <h3 class="text-2xl md:text-3xl font-bold">Drive summary</h3>
+                <span class="text-[10px] text-slate-400 font-bold tracking-widest uppercase hidden sm:inline">Screen 06</span>
+            </div>
+            <img src="assets/images/autoux/drive-summary.png" alt="Drive summary dashboard showing assist events trend graph and drive insight" loading="lazy" decoding="async" style="width:100%;height:auto;display:block;border-radius:20px;" />
+            <div class="space-y-4 text-lg font-light text-slate-600 max-w-5xl">
+                <p>Not a score. Just honest data. Assist events across the last ten drives shown as a simple trend graph. A line that, over time, should trend downward.</p>
+                <p>One quiet amber observation at the bottom: "You needed less guidance this week than last." No celebration. The driver draws their own conclusion.</p>
+            </div>
+        </section>
+
+        <!-- Technical Feasibility -->
+        <section class="space-y-6">
+            <h2 class="text-4xl md:text-5xl serif">Technical feasibility</h2>
+            <div class="space-y-4 text-lg font-light text-slate-600 max-w-5xl">
+                <p>A natural question when designing driver guidance: how does the car actually know when to guide?</p>
+                <p>The answer lies in sensors already present in most modern ADAS-equipped vehicles. Blind spot monitoring detects adjacent lane traffic. Radar measures gap distances and speed differentials. GPS knows ramp geometry and parking zones. Steering input sensors detect wheel position and turning angle. Reverse gear activation triggers the parking camera.</p>
+                <p><span class="font-medium text-black">This project doesn't propose new hardware.</span> It proposes a UX layer that synthesizes existing sensor data into calm, timely, human-readable guidance for a new driver.</p>
+                <p class="text-slate-400 italic">This is a speculative concept. The goal was to define the interaction model and surface the design questions worth asking, not to propose a production-ready solution.</p>
+            </div>
+        </section>
+
+        <!-- System Considerations -->
+        <section class="space-y-8">
+            <h2 class="text-4xl md:text-5xl serif">System considerations</h2>
+            <p class="text-lg font-light text-slate-500 max-w-5xl">Thinking beyond the happy path shaped several important system decisions.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                <div class="rounded-[24px] p-8 border border-slate-100 space-y-3" style="background-color: var(--card-slate);">
+                    <h4 class="text-[10px] font-bold uppercase tracking-[0.2em] text-black">Multiple drivers, one car</h4>
+                    <p class="text-base font-light text-slate-600 leading-relaxed">Progress is tied to the driver profile, not the vehicle. Each profile tracks independently. When a parent drives the same car, New Driver Mode simply doesn't activate for them.</p>
+                </div>
+
+                <div class="rounded-[24px] p-8 border border-slate-100 space-y-3" style="background-color: var(--card-sky);">
+                    <h4 class="text-[10px] font-bold uppercase tracking-[0.2em] text-black">Returning after a long break</h4>
+                    <p class="text-base font-light text-slate-600 leading-relaxed">Confidence can reset after an accident or extended time away. The system detects inactivity and offers a recalibration option rather than assuming the driver is at their previous level.</p>
+                </div>
+
+                <div class="rounded-[24px] p-8 border border-slate-100 space-y-3" style="background-color: var(--card-mint);">
+                    <h4 class="text-[10px] font-bold uppercase tracking-[0.2em] text-black">When to stop using the mode</h4>
+                    <p class="text-base font-light text-slate-600 leading-relaxed">The system suggests reducing guidance over time based on usage patterns. But the driver decides when to turn it off entirely. That control always stays with them.</p>
+                </div>
+
+                <div class="rounded-[24px] p-8 border border-slate-100 space-y-3" style="background-color: var(--card-peach);">
+                    <h4 class="text-[10px] font-bold uppercase tracking-[0.2em] text-black">How progress is communicated</h4>
+                    <p class="text-base font-light text-slate-600 leading-relaxed">The system never asks the driver to manage their own progress. It tracks silently in the background and communicates through behavior — guidance appearing less frequently over time rather than through scores or notifications.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Automation Bias -->
+        <section class="space-y-6">
+            <h2 class="text-4xl md:text-5xl serif">Designing against reliance</h2>
+            <div class="space-y-4 text-lg font-light text-slate-600 max-w-5xl">
+                <p><span class="highlight-blue">One concern that came up early in the design process was automation bias,</span> the tendency for humans to over-rely on automated systems and lose the ability to perform without them. Aviation has struggled with this for decades. It's why pilots still do manual landings regularly, to maintain proficiency.</p>
+                <p>New Driver Mode could easily fall into the same trap. The design addresses this in three ways. Guidance activates only in high-anxiety moments, not as a constant presence. It steps back progressively as the driver completes scenarios independently. And the Drive Summary shows assist events trending downward over time, making the reduction in guidance visible and meaningful.</p>
+                <p><span class="font-medium text-black">The goal was never to make drivers dependent on the system. It was to build the muscle memory and judgment that makes the system unnecessary.</span></p>
+            </div>
+        </section>
+
+        <!-- Business Case -->
+        <section class="space-y-6">
+            <h2 class="text-4xl md:text-5xl serif">Why this makes business sense</h2>
+            <div class="p-10 md:p-12 rounded-[2rem] space-y-6 border border-slate-100" style="background-color: var(--card-peach);">
+                <p class="text-xl md:text-2xl serif leading-relaxed">New Driver Mode isn't just a safety feature. It's a purchase decision.</p>
+                <p class="text-lg font-light text-slate-600 leading-relaxed">Parents buying their teenager's first car will actively choose a vehicle that offers intelligent guidance over one that only restricts. The new driver who builds confidence in a particular vehicle becomes a loyal customer for the next 20 years.</p>
+            </div>
+        </section>
+
+        <!-- Reflection -->
+        <section class="pt-12 pb-16 border-t border-slate-100">
+            <h2 class="text-4xl md:text-5xl serif mb-8">Reflection</h2>
+            <div class="space-y-6 text-xl md:text-2xl font-light leading-relaxed max-w-5xl">
+                <p>This project challenged me in ways I didn't expect.</p>
+                <p>Designing for a high-stakes environment meant every decision had a real consequence. There was no room for decoration. Every element on the HUD had to earn its place because the wrong guidance at the wrong moment isn't just bad UX, it's a safety risk.</p>
+                <p>The most unexpected outcome was how it changed how I observe. Every time I sat in a car, even as a passenger, I found myself watching how drivers interact with their systems, timing how long a highway ramp actually takes, noticing hand movements, eye movements, how people handle unexpected situations. I became a much more attentive observer.</p>
+                <p>This time I wasn't designing good looking screens. I was <span class="underline underline-offset-8 decoration-cyan-200 decoration-4">designing a safety experience.</span> That shift changed how I think about design.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#0A0A0A] py-16 md:py-20 px-8 md:px-16">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-12">
+            <div class="space-y-4">
+                <span class="text-[11px] font-bold uppercase tracking-[0.2em] text-[#666]">Next Case Study</span>
+                <h2 class="text-white text-2xl md:text-4xl serif leading-tight max-w-xl">
+                    Designing an AI-powered job search platform from 0 to MVP.
+                </h2>
+            </div>
+            <a href="hirello.html" class="bg-white text-black px-8 py-4 rounded-full font-bold text-sm flex items-center gap-3 hover:scale-105 transition-transform group">
+                View Project <span class="text-lg transition-transform group-hover:translate-x-1">→</span>
+            </a>
+        </div>
+    </footer>
+
+    <script>
+      const bar = document.getElementById('scrollBar');
+      window.addEventListener('scroll', () => {
+        const t = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.transform = `scaleX(${t > 0 ? window.scrollY / t : 0})`;
+      }, { passive: true });
+
+      const hamburger = document.getElementById('navHamburger');
+      const drawer = document.getElementById('navDrawer');
+      if (hamburger && drawer) {
+        const toggleMenu = (open) => {
+          hamburger.classList.toggle('open', open);
+          drawer.classList.toggle('open', open);
+          hamburger.setAttribute('aria-expanded', open);
+          drawer.setAttribute('aria-hidden', !open);
+          document.body.style.overflow = open ? 'hidden' : '';
+        };
+        hamburger.addEventListener('click', () => toggleMenu(!hamburger.classList.contains('open')));
+        drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', () => toggleMenu(false)));
+        window.addEventListener('resize', () => { if (window.innerWidth > 700) toggleMenu(false); });
+      }
+    </script>
+</body>
+</html>
