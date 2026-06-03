@@ -82,14 +82,6 @@
     .hero-right { display: flex; justify-content: flex-end; align-items: center; }
     .hero-polaroid { background: #fff; padding: 16px 16px 48px; box-shadow: 0 8px 32px rgba(0,0,0,.12); transform: rotate(2deg); transition: transform .4s ease; display: inline-block; }
     .hero-polaroid img { width: 300px; height: 360px; object-fit: cover; display: block; background: #f1f5f9; }
-    
-    .focus-section { padding: 96px 0; background: #ffffff; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-    .focus-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 80px; }
-    .focus-card h3 { font-family: var(--display); font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
-    .focus-card h3::after { content: ""; height: 1px; flex-grow: 1; background: var(--border); }
-    .focus-list { list-style: none; }
-    .focus-list li { font-size: 24px; font-family: var(--display); font-weight: 400; margin-bottom: 12px; color: var(--text); letter-spacing: -0.01em; }
-    .focus-list li span { font-weight: 400; color: var(--muted); margin-right: 8px; font-family: var(--font); font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; }
 
     .timeline-section { padding: 96px 0; }
     .tl-item { display: grid; grid-template-columns: 220px 1fr; gap: 48px; padding: 40px 0; border-top: 1px solid var(--border); }
@@ -175,7 +167,6 @@
       .hero-left { display: flex; flex-direction: column; align-items: center; }
       .hero-h1 { white-space: normal; }
       .hero-right { justify-content: center; margin-top: 48px; }
-      .focus-grid { grid-template-columns: 1fr; gap: 48px; }
       .tl-item { grid-template-columns: 1fr; gap: 16px; }
       .collage-wrap { height: auto; display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; position: static; margin-top: 40px; }
       .pol { position: relative; left: auto !important; top: auto !important; transform: none !important; margin-bottom: 20px; }
@@ -221,29 +212,6 @@
       </div>
     </div>
   </div>
-
-  <section class="focus-section">
-    <div class="wrap">
-      <div class="focus-grid">
-        <div class="focus-card fi d1">
-          <h3>What I work on</h3>
-          <ul class="focus-list">
-            <li><span>01.</span> AI-driven product experiences</li>
-            <li><span>02.</span> Complex, multi-step workflows</li>
-            <li><span>03.</span> Systems that guide, not overwhelm</li>
-          </ul>
-        </div>
-        <div class="focus-card fi d2">
-          <h3>How I think</h3>
-          <ul class="focus-list">
-            <li><span>→</span> Clarity over complexity</li>
-            <li><span>→</span> Action over information</li>
-            <li><span>→</span> Systems over screens</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <section class="timeline-section">
     <div class="wrap">
